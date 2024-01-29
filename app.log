@@ -1,0 +1,34 @@
+2024-01-26 03:14:40,654 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-01-26 03:15:40,709 - app - INFO - Fetching historical data for XLM-USD
+2024-01-26 03:15:41,521 - app - INFO - Fetching product stats for XLM-USD
+2024-01-26 03:15:43,238 - app - INFO - Long term 24 hour moving average: 0.11220429166666666
+2024-01-26 03:16:52,543 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 51.207463309177776
+2024-01-26 03:16:54,270 - app - INFO - Current Price: 0.113258
+2024-01-26 03:16:55,108 - app - INFO - Upper Bollinger Band: 0.11329598316685069
+2024-01-26 03:16:55,111 - app - INFO - Lower Bollinger Band: 0.11283636977432579
+2024-01-26 03:16:55,113 - app - INFO - Long Term 24 hr Moving Average: 0.11220429166666666
+2024-01-26 03:16:55,147 - app - INFO - Current RSI: 51.207463309177776
+2024-01-26 03:16:55,757 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-01-26 03:16:55,758 - app - INFO - Creating and starting cycle set(s)...
+2024-01-26 03:16:55,759 - app - INFO - Creating CycleSet with cycle_type: sell_buy
+2024-01-26 03:16:55,760 - app - INFO - CycleSet 1 (sell_buy) counted
+2024-01-26 03:16:55,760 - app - INFO - Cycle 1 (sell_buy) counted
+2024-01-26 03:16:55,760 - app - INFO - Cycle Set 1 (sell_buy) created.
+2024-01-26 03:16:55,761 - app - INFO - Cycle Set 1 (sell_buy) starting cycle initiated...
+2024-01-26 03:16:55,762 - app - INFO - Determining starting price for sell order...
+2024-01-26 03:16:56,565 - app - INFO - Current XLM-USD price: 0.11325
+2024-01-26 03:16:58,178 - app - INFO - Starting price calculated for sell order: 0.113239
+2024-01-26 03:16:59,117 - app - INFO - Starting opening cycle sell order placed successfully: d60cd6e2-6506-4589-82f8-fedacec1aa39
+2024-01-26 03:16:59,937 - app - INFO - Initial order details: {'order_id': 'd60cd6e2-6506-4589-82f8-fedacec1aa39', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.113239', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'b253e735-57cf-46e8-9cc0-62b275fd61cf', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-01-26T08:16:59.620485Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '100', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-01-26 03:19:03,826 - app - INFO - Current order status: FILLED
+2024-01-26 03:19:03,828 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': 'd60cd6e2-6506-4589-82f8-fedacec1aa39', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.113239', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'b253e735-57cf-46e8-9cc0-62b275fd61cf', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-01-26T08:16:59.620485Z', 'completion_percentage': '100.00', 'filled_size': '100', 'average_filled_price': '0.113239', 'fee': '', 'number_of_fills': '1', 'filled_value': '11.3239', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.03963365', 'size_inclusive_of_fees': False, 'total_value_after_fees': '11.28426635', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-01-26T08:17:13.496Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-01-26 03:19:03,860 - app - INFO - Processed order parameters: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.284266, 'residual_amt_B_ols': 0.0}
+2024-01-26 03:19:03,864 - app - INFO - Value of order_processing_params: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.284266, 'residual_amt_B_ols': 0.0}
+2024-01-26 03:19:03,869 - app - INFO - Closing cycle buy price calculated: 0.112333
+2024-01-26 03:19:03,872 - app - INFO - Amount of quote currency compounded for close cycle limit buy order: 0.09028300000000122
+2024-01-26 03:19:03,873 - app - INFO - Amount of quote currency to be used if no compounding for close cycle limit buy order: 11.193983
+2024-01-26 03:19:03,875 - app - INFO - Next close cycle limit order quote currency size: 11.284266
+2024-01-26 03:19:03,912 - app - INFO - Base size calculated successfully: 100.0
+2024-01-26 03:19:04,994 - app - INFO - Next closing cycle buy order placed. Order ID: 8d2859bb-a664-4476-8699-53e5107fbe6e
+2024-01-26 03:19:04,996 - app - INFO - Starting closing cycle buy order placed successfully: 8d2859bb-a664-4476-8699-53e5107fbe6e
+2024-01-26 03:19:05,852 - app - INFO - Initial order details: {'order_id': '8d2859bb-a664-4476-8699-53e5107fbe6e', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.112333', 'post_only': True}}, 'side': 'BUY', 'client_order_id': '91515c1f-7dba-4f1d-8867-e43bf3db098c', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-01-26T08:19:05.496849Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '11.27261655', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}

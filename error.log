@@ -1,0 +1,13 @@
+2024-01-26 03:14:40,650 - errors - ERROR - This is an error message
+2024-01-26 03:16:55,757 - errors - ERROR - This is an error message
+2024-01-26 10:27:34,732 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-26 10:28:34,103 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
+2024-01-26 11:21:30,649 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-27 01:38:47,119 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-27 14:56:52,619 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-27 14:57:47,976 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
+2024-01-27 14:58:28,442 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-27 15:00:55,348 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-27 15:02:06,293 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-01-29 17:30:53,084 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
+2024-01-29 17:31:13,287 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)

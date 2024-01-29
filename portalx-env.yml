@@ -1,0 +1,7 @@
+name: portalx_env
+channels:
+  - defaults
+dependencies:
+  - python=3.11.4
+  - requests
+prefix: C:\Users\ortho\miniconda3\envs\portalx_env

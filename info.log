@@ -1,0 +1,51 @@
+2024-01-26 03:14:40,651 - info - INFO - This is an info message
+2024-01-26 03:15:35,681 - info - INFO - user_input2 module loaded successfully
+2024-01-26 03:15:35,918 - info - INFO - API credentials fetched successfully
+2024-01-26 03:15:35,918 - info - INFO - config module loaded successfully
+2024-01-26 03:15:36,296 - info - INFO - coinbase_auth module loaded successfully
+2024-01-26 03:15:36,297 - info - INFO - coinbase_utils module loaded successfully
+2024-01-26 03:15:38,274 - info - INFO - {'product_id': 'XLM-USD', 'price': '0.113258', 'price_percentage_change_24h': '1.12140854627596', 'volume_24h': '44418430', 'volume_percentage_change_24h': '-11.06790795855834', 'base_increment': '1', 'quote_increment': '0.000001', 'quote_min_size': '1', 'quote_max_size': '10000000', 'base_min_size': '12', 'base_max_size': '116945400', 'base_name': 'Stellar Lumens', 'quote_name': 'US Dollar', 'watched': True, 'is_disabled': False, 'new': False, 'status': 'online', 'cancel_only': False, 'limit_only': False, 'post_only': False, 'trading_disabled': False, 'auction_mode': False, 'product_type': 'SPOT', 'quote_currency_id': 'USD', 'base_currency_id': 'XLM', 'base_display_symbol': 'XLM', 'quote_display_symbol': 'USD', 'view_only': False, 'price_increment': '0.000001'}
+2024-01-26 03:15:38,279 - info - INFO - bollinger_utils module loaded successfully
+2024-01-26 03:15:39,123 - info - INFO - order_utils module loaded successfully
+2024-01-26 03:15:42,365 - info - INFO - {'product_id': 'XLM-USD', 'price': '0.113258', 'price_percentage_change_24h': '1.12140854627596', 'volume_24h': '44418430', 'volume_percentage_change_24h': '-11.06798630262436', 'base_increment': '1', 'quote_increment': '0.000001', 'quote_min_size': '1', 'quote_max_size': '10000000', 'base_min_size': '12', 'base_max_size': '116945400', 'base_name': 'Stellar Lumens', 'quote_name': 'US Dollar', 'watched': True, 'is_disabled': False, 'new': False, 'status': 'online', 'cancel_only': False, 'limit_only': False, 'post_only': False, 'trading_disabled': False, 'auction_mode': False, 'product_type': 'SPOT', 'quote_currency_id': 'USD', 'base_currency_id': 'XLM', 'base_display_symbol': 'XLM', 'quote_display_symbol': 'USD', 'view_only': False, 'price_increment': '0.000001'}
+2024-01-26 03:15:42,377 - info - INFO - Moving Average: 0.11306617647058824
+2024-01-26 03:15:42,380 - info - INFO - Standard Deviation: 0.00011490334813122236
+2024-01-26 03:15:42,381 - info - INFO - Upper Bollinger Band: 0.11329598316685069
+2024-01-26 03:15:42,382 - info - INFO - Lower Bollinger Band: 0.11283636977432579
+2024-01-26 03:16:52,545 - info - INFO - repeating_cycle_utils module loaded successfully
+2024-01-26 03:16:52,545 - info - INFO - order_processing_utils module loaded successfully
+2024-01-26 03:16:53,451 - info - INFO - {'product_id': 'XLM-USD', 'price': '0.11325', 'price_percentage_change_24h': '1.09982324269314', 'volume_24h': '44450518', 'volume_percentage_change_24h': '-10.97015740432944', 'base_increment': '1', 'quote_increment': '0.000001', 'quote_min_size': '1', 'quote_max_size': '10000000', 'base_min_size': '12', 'base_max_size': '116945400', 'base_name': 'Stellar Lumens', 'quote_name': 'US Dollar', 'watched': True, 'is_disabled': False, 'new': False, 'status': 'online', 'cancel_only': False, 'limit_only': False, 'post_only': False, 'trading_disabled': False, 'auction_mode': False, 'product_type': 'SPOT', 'quote_currency_id': 'USD', 'base_currency_id': 'XLM', 'base_display_symbol': 'XLM', 'quote_display_symbol': 'USD', 'view_only': False, 'price_increment': '0.000001'}
+2024-01-26 03:16:54,266 - info - INFO - Compounding functions defined.
+2024-01-26 03:16:54,267 - info - INFO - compounding_utils module loaded successfully
+2024-01-26 03:16:55,105 - info - INFO - 24 hr High: 0.113714, 24 hr Low: 0.11159
+2024-01-26 03:16:55,106 - info - INFO - 24 hr mean: 0.112652
+2024-01-26 03:16:55,149 - info - INFO - cycle_set_utils module loaded successfully
+2024-01-26 03:16:55,757 - info - INFO - This is an info message
+2024-01-26 03:16:55,758 - info - INFO - user_config data: {'base_asset': 'XLM', 'quote_asset': 'USD', 'product_id': 'XLM-USD', 'starting_size_B': 100.0, 'starting_size_Q': 0.0, 'profit_percent': 0.001, 'taker_fee': 0.0055, 'maker_fee': 0.0035, 'compound_percent': 100.0, 'compounding_option': '100', 'wait_period_unit': 'minutes', 'first_order_wait_period': 1, 'chart_interval': 60, 'num_intervals': 20, 'window_size': 20, 'stacking': 'False', 'step_price': 'False'}
+2024-01-26 03:16:55,761 - info - INFO - CyclSet 1 sell_buy Cycle 1: Pending-Starting Opening Sell Order
+2024-01-26 03:16:57,373 - info - INFO - 24 hr High: 0.113714, 24 hr Low: 0.11159
+2024-01-26 03:16:57,374 - info - INFO - 24 hr mean: 0.112652
+2024-01-26 03:16:57,374 - info - INFO - Moving Average: 0.11306617647058824
+2024-01-26 03:16:57,376 - info - INFO - Standard Deviation: 0.00011490334813122236
+2024-01-26 03:16:57,377 - info - INFO - Upper Bollinger Band: 0.11329598316685069
+2024-01-26 03:16:57,378 - info - INFO - Lower Bollinger Band: 0.11283636977432579
+2024-01-26 03:16:58,170 - info - INFO - get_best_bid_ask_prices raw response data: {"pricebooks":[{"product_id":"XLM-USD", "bids":[{"price":"0.113207", "size":"680"}], "asks":[{"price":"0.11325", "size":"1663"}], "time":"2024-01-26T08:16:58.037425Z"}]}
+2024-01-26 03:16:58,171 - info - INFO - For XLM-USD: Best bid: 0.113207, Best ask: 0.11325
+2024-01-26 03:16:58,177 - info - INFO - Current price: 0.11325
+2024-01-26 03:16:58,179 - info - INFO - Unique ID created: b253e735-57cf-46e8-9cc0-62b275fd61cf
+2024-01-26 03:16:58,180 - info - INFO - Payload: {'side': 'SELL', 'order_configuration': {'limit_limit_gtc': {'base_size': '100.0', 'limit_price': '0.113239', 'post_only': True}}, 'product_id': 'XLM-USD', 'client_order_id': 'b253e735-57cf-46e8-9cc0-62b275fd61cf'}
+2024-01-26 03:16:59,114 - info - INFO - <Response [200]>
+2024-01-26 03:16:59,114 - info - INFO - 200
+2024-01-26 03:16:59,114 - info - INFO - b'{"success":true, "failure_reason":"UNKNOWN_FAILURE_REASON", "order_id":"d60cd6e2-6506-4589-82f8-fedacec1aa39", "success_response":{"order_id":"d60cd6e2-6506-4589-82f8-fedacec1aa39", "product_id":"XLM-USD", "side":"SELL", "client_order_id":"b253e735-57cf-46e8-9cc0-62b275fd61cf"}, "order_configuration":{"limit_limit_gtc":{"base_size":"100.0", "limit_price":"0.113239", "post_only":true}}}'
+2024-01-26 03:16:59,115 - info - INFO - Starting opening cycle sell order placed. Order ID: d60cd6e2-6506-4589-82f8-fedacec1aa39
+2024-01-26 03:19:03,857 - info - INFO - Subtotal for open limit sell order: 11.3239
+2024-01-26 03:19:03,858 - info - INFO - Fee for open limit sell order: 0.039634
+2024-01-26 03:19:03,858 - info - INFO - Total open cycle amount of base currency spent: 100.0
+2024-01-26 03:19:03,859 - info - INFO - Total open cycle amount of quote currency received: 11.284266
+2024-01-26 03:19:03,860 - info - INFO - Residual open cycle amount of base currency not spent: 0.0
+2024-01-26 03:19:03,912 - info - INFO - close_size_Q = 11.284266, maker_fee = 0.0035, close_price_buy = 0.112333
+2024-01-26 03:19:03,914 - info - INFO - Unique ID created: 91515c1f-7dba-4f1d-8867-e43bf3db098c
+2024-01-26 03:19:03,915 - info - INFO - Payload: {'side': 'BUY', 'order_configuration': {'limit_limit_gtc': {'base_size': '100.0', 'limit_price': '0.112333', 'post_only': True}}, 'product_id': 'XLM-USD', 'client_order_id': '91515c1f-7dba-4f1d-8867-e43bf3db098c'}
+2024-01-26 03:19:04,993 - info - INFO - <Response [200]>
+2024-01-26 03:19:04,994 - info - INFO - 200
+2024-01-26 03:19:04,994 - info - INFO - b'{"success":true, "failure_reason":"UNKNOWN_FAILURE_REASON", "order_id":"8d2859bb-a664-4476-8699-53e5107fbe6e", "success_response":{"order_id":"8d2859bb-a664-4476-8699-53e5107fbe6e", "product_id":"XLM-USD", "side":"BUY", "client_order_id":"91515c1f-7dba-4f1d-8867-e43bf3db098c"}, "order_configuration":{"limit_limit_gtc":{"base_size":"100.0", "limit_price":"0.112333", "post_only":true}}}'

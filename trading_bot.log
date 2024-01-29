@@ -1,0 +1,115 @@
+2023-10-02 21:48:26,182 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-02 21:48:26,887 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-02 21:48:27,705 - ERROR - An error occurred: too many values to unpack (expected 2)
+2023-10-12 23:07:36,261 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-12 23:07:36,954 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/%22XLM-USD%22 HTTP/1.1" 401 13
+2023-10-12 23:07:37,675 - ERROR - An error occurred: 'NoneType' object is not subscriptable
+2023-10-12 23:26:52,562 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-12 23:26:53,313 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 03:25:54,124 - ERROR - An error occurred: [WinError 10054] An existing connection was forcibly closed by the remote host
+2023-10-13 04:03:28,845 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 04:03:29,587 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 04:03:33,694 - ERROR - An error occurred: place_starting_open_sell_order() takes 3 positional arguments but 9 were given
+2023-10-13 04:30:21,432 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 04:30:22,176 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 04:30:27,313 - ERROR - An error occurred: create_signed_request() missing 2 required positional arguments: 'method' and 'endpoint'
+2023-10-13 11:55:08,571 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 11:55:09,282 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 11:55:13,976 - ERROR - An error occurred: create_signed_request() missing 2 required positional arguments: 'method' and 'endpoint'
+2023-10-13 12:28:35,104 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 12:28:35,946 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 12:28:41,337 - ERROR - An error occurred: create_signed_request() missing 2 required positional arguments: 'method' and 'endpoint'
+2023-10-13 14:19:15,806 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 14:19:16,661 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 14:29:41,678 - ERROR - An error occurred: create_signed_request() missing 2 required positional arguments: 'method' and 'endpoint'
+2023-10-13 17:21:36,100 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 17:21:36,801 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 17:21:42,249 - ERROR - An error occurred: unsupported operand type(s) for /: 'list' and 'str'
+2023-10-13 18:49:21,188 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 18:49:21,897 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 18:49:27,630 - ERROR - An error occurred: unsupported operand type(s) for /: 'list' and 'str'
+2023-10-13 19:48:13,515 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-13 19:48:14,214 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-13 19:48:19,459 - ERROR - An error occurred: unsupported operand type(s) for /: 'list' and 'str'
+2023-10-16 09:03:21,483 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-16 09:03:22,150 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-16 09:03:27,136 - ERROR - An error occurred: unsupported operand type(s) for /: 'list' and 'str'
+2023-10-16 16:16:48,760 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-16 16:16:49,442 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-16 16:16:56,811 - ERROR - An error occurred: unsupported operand type(s) for /: 'list' and 'str'
+2023-10-16 18:07:31,148 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-16 18:07:31,823 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-16 18:12:39,001 - ERROR - An error occurred: create_signed_request() missing 2 required positional arguments: 'method' and 'endpoint'
+2023-10-16 18:45:34,388 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-16 18:45:35,049 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-16 18:50:41,952 - ERROR - An error occurred: create_signed_request() missing 2 required positional arguments: 'method' and 'endpoint'
+2023-10-16 20:35:57,999 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-16 20:35:58,661 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-16 20:41:05,466 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-17 00:00:53,574 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 00:00:54,308 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-17 00:02:00,931 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-17 00:42:32,880 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 00:42:33,529 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-17 00:43:39,939 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-17 09:57:52,579 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 09:57:53,247 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-17 09:57:57,389 - ERROR - An error occurred: nonnumeric port: '//coinbase.com'
+2023-10-17 10:06:52,261 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 10:06:52,918 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-17 10:07:59,561 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-17 10:16:53,163 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 10:16:53,848 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-17 10:18:00,438 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-17 14:45:03,863 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 14:45:04,586 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-17 14:45:08,895 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-17 14:45:09,527 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 401 13
+2023-10-17 14:46:11,787 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-18 16:21:12,121 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-18 16:21:12,825 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-18 16:22:19,126 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-18 23:31:02,387 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-18 23:31:03,181 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-18 23:31:06,886 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-18 23:31:07,497 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 401 13
+2023-10-18 23:31:07,525 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-18 23:31:08,158 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 401 13
+2023-10-18 23:32:09,836 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-21 02:16:33,917 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 02:16:35,039 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-21 02:16:42,224 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 02:16:43,309 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 503 42
+2023-10-21 02:16:43,339 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 02:16:44,386 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 401 13
+2023-10-21 02:17:46,325 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-21 03:00:23,975 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 03:00:24,991 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-21 03:00:30,575 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 03:00:31,579 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 200 None
+2023-10-21 03:00:31,643 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 03:00:32,591 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 200 None
+2023-10-21 03:01:34,790 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
+2023-10-21 03:59:25,488 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 03:59:26,161 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-21 03:59:27,617 - ERROR - An error occurred: 'NoneType' object is not subscriptable
+2023-10-21 04:36:03,915 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 04:36:04,565 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 502 None
+2023-10-21 04:36:08,684 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 04:36:09,479 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 200 None
+2023-10-21 04:36:09,499 - ERROR - An error occurred: 'NoneType' object is not subscriptable
+2023-10-21 04:58:58,463 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 04:58:59,383 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-21 04:59:04,651 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 04:59:05,597 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 200 None
+2023-10-21 04:59:05,625 - ERROR - An error occurred: name 'starting_price_buy' is not defined
+2023-10-21 05:04:22,114 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 05:04:22,961 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 502 None
+2023-10-21 05:04:23,864 - ERROR - An error occurred: 'NoneType' object is not subscriptable
+2023-10-21 11:03:58,113 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 11:03:58,947 - DEBUG - https://api.coinbase.com:443 "GET /api/v3/brokerage/products/XLM-USD HTTP/1.1" 200 None
+2023-10-21 11:04:04,353 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 11:04:05,604 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 200 None
+2023-10-21 11:04:05,651 - DEBUG - Starting new HTTPS connection (1): api.coinbase.com:443
+2023-10-21 11:04:06,592 - DEBUG - https://api.coinbase.com:443 "POST /api/v3/brokerage/orders HTTP/1.1" 200 None
+2023-10-21 11:05:08,414 - ERROR - An error occurred: 'str' object cannot be interpreted as an integer
