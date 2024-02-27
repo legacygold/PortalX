@@ -1,4 +1,5 @@
 # cycle_set_utils.py
+import sys
 import threading
 import time
 from logging_config import app_logger, info_logger, error_logger
@@ -13,6 +14,12 @@ from order_utils import place_starting_open_sell_order, place_starting_open_buy_
 from order_processing_utils import open_limit_sell_order_processing, open_limit_buy_order_processing, close_limit_buy_order_processing, close_limit_sell_order_processing
 from compounding_utils import calculate_close_limit_buy_compounding_amt_Q, calculate_close_limit_sell_compounding_amt_B, determine_next_close_size_Q_limit, determine_next_close_size_B_limit, determine_next_open_size_B_limit, determine_next_open_size_Q_limit, calculate_open_limit_sell_compounding_amt_B, calculate_open_limit_buy_compounding_amt_Q
 from repeating_cycle_utils import upper_bb, lower_bb, long_term_ma24, current_rsi, calculate_rsi, determine_next_open_sell_order_price_with_retry, place_next_opening_cycle_sell_order, determine_next_open_buy_order_price_with_retry, place_next_opening_cycle_buy_order, place_next_closing_cycle_buy_order, place_next_closing_cycle_sell_order
+
+# Define the recursion limit (adjust this value as needed)
+RECURSION_LIMIT = 1000000
+
+# Set the recursion limit
+sys.setrecursionlimit(RECURSION_LIMIT)
 
 # Define locks
 sell_buy_cycle_start_lock = threading.Lock()
@@ -109,6 +116,9 @@ class CycleSet:
     sell_buy_cycle_count = 0
     buy_sell_cycle_count = 0
 
+    # Initialize recursion_depth
+    recursion_depth = 0
+
     # Class attribute to store all created cycle set instances
     cycleset_instances = []
     
@@ -145,11 +155,13 @@ class CycleSet:
       
             app_logger.info(f"Creating CycleSet with cycle_type: {self.cycle_type}")
 
-            # Initialize cycle set counts for sell_buy and buy_sell
-            if cycle_type == "sell_buy":
-                self.cycleset_number = CycleSet.sell_buy_counter + 1
-            elif cycle_type == "buy_sell":
-                self.cycleset_number = CycleSet.buy_sell_counter + 1
+            # Initialize and increment cycle set counters based on cycle type
+            if self.cycle_type == "sell_buy":
+                CycleSet.sell_buy_counter += 1
+                self.cycleset_number = CycleSet.sell_buy_counter
+            elif self.cycle_type == "buy_sell":
+                CycleSet.buy_sell_counter += 1
+                self.cycleset_number = CycleSet.buy_sell_counter
 
             app_logger.info(f"CycleSet {self.cycleset_number} ({self.cycle_type}) counted")
 
@@ -217,7 +229,515 @@ class CycleSet:
 
         return cycle_instance, self.cycle_number
 
+    def place_next_sell_buy_cycle_orders(self, open_size_B, open_price_sell, sell_buy_cycle_instance):
+        try:
+            from repeating_cycle_utils import closing_prices, product_stats, upper_bb, long_term_ma24, current_rsi
+
+            # Update 'cycle_number' in the CycleSet class
+            self.cycle_number = sell_buy_cycle_instance.cycle_number
+            app_logger.info("Self: %s", self)
+
+            with thread_lock:
+                print("'sell_buy' thread acquired lock")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
+                with self.sell_buy_cycleset_lock:
+                    # Place next opening cycle sell order
+                    print("Placing the next opening cycle sell order...")
+                    open_order_id_sell = place_next_opening_cycle_sell_order(api_key, api_secret, product_id, open_size_B, open_price_sell)
+                    
+                    if open_order_id_sell is not None:
+                        self.orders.append(open_order_id_sell)
+                        app_logger.info("Opening cycle sell order placed successfully: %s", open_order_id_sell)
+                        self.cycle_running = True  # Set the cycle running status to True
+                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Active-Opening Cycle Sell Order"
+                        app_logger.info(self.cycle_status)
+
+                    if open_order_id_sell is None:
+                        error_logger.error(f"Opening cycle sell order not found for CycleSet {self.cycleset_number} {self.cycle_type}. Stopping the current cycle set.")
+                        return
+                    
+                    print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                    print("'sell_buy' thread releasing lock")
+
+            with self.sell_buy_cycleset_lock:
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")        
+                
+                # Call wait_for_order function
+                order_details = wait_for_order(api_key, api_secret, open_order_id_sell, max_retries=3)
+           
+                # Check if the order_details is None
+                if order_details is None:
+                    # Handle the case where wait_for_order did not complete successfully
+                    error_logger.error(f"Opening sell order status not found for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Opening Cycle Sell Order"
+                    info_logger.info(self.cycle_status)
+                    print("Opening sell order failed. Cycle failed. Cycle set stopped.")
+                    return
+            
+                # Process opening cycle sell order amount spent, fees, and amount to be received
+                print("Processing opening cycle sell order assets...")
+                order_processing_params = open_limit_sell_order_processing(open_size_B, order_details, order_processing_params = {})
+                total_received_Q_ols = order_processing_params["total_received_Q_ols"] 
+                total_spent_B_ols = order_processing_params["total_spent_B_ols"]
+                residual_amt_B_ols = order_processing_params["residual_amt_B_ols"]
+                self.residual_amt_B_list.append(residual_amt_B_ols)
+
+                try:
+                    app_logger.info("Value of order_processing_params: %s", order_processing_params)
+                    if order_processing_params is not None:
+                        # Determine number decimal places of quote_increment (an integer)
+                        decimal_places = get_decimal_places(product_stats['quote_increment'])
+                        # Calculate closing cycle buy price
+                        print("Calculating closing cycle buy price...")
+                        close_price_buy = round(open_price_sell * (1 - profit_percent - (2 * maker_fee)), decimal_places)
+                        app_logger.info("Closing cycle buy price calculated: %s", close_price_buy)
+                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Pending-Closing Buy Order"
+                        info_logger.info(self.cycle_status)
+
+                except Exception as e:
+                        error_logger.error(f"Error in order processing: {e}")
+
+                if order_processing_params is None:
+                    # Handle the case where open_limit_sell_order_processing did not complete successfully
+                    error_logger.error(f"Order processing parameters not found for opening cycle sell order for CycleSet {self.cycleset_number}({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycleset_status = "Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Opening Sell Order"
+                    info_logger.info(self.cycle_status)
+                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")       
+                    return
+                
+                # Calculate starting (cycle 1) close cycle compounding amount and next starting close cycle size
+                compounding_amt_Q_clb, no_compounding_Q_limit_clb = calculate_close_limit_buy_compounding_amt_Q(total_received_Q_ols, total_spent_B_ols, close_price_buy, maker_fee, product_stats["quote_increment"])
+                close_size_Q = determine_next_close_size_Q_limit(compounding_option, total_received_Q_ols, no_compounding_Q_limit_clb, compounding_amt_Q_clb, compound_percent)
+
+                if close_size_Q is not None:
+                    print("Closing cycle compounding and next size calculated successfully")
+
+                if close_size_Q is None:
+                    error_logger.error(f"Closing cycle size could not be determined for closing buy order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
+
+            with thread_lock:
+                print("'sell_buy' thread acquired lock")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
+                # Place closing cycle buy order
+                print("Placing the closing cycle buy order...")
+                close_order_id_buy = place_next_closing_cycle_buy_order(api_key, api_secret, product_id, close_size_Q, maker_fee, close_price_buy, product_stats)
+
+                if close_order_id_buy is not None:
+                    self.orders.append(close_order_id_buy)    
+                    app_logger.info("Closing cycle buy order placed successfully: %s", close_order_id_buy)
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Active-Closing Buy Order"
+                    info_logger.info(self.cycle_status)
+
+                if close_order_id_buy is None:
+                    error_logger.error(f"Closing buy order not found for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                print("'sell_buy' thread releasing lock")
+
+            with self.sell_buy_cycleset_lock:
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")  
+
+                # Call wait_for_order function
+                order_details = wait_for_order(api_key, api_secret, close_order_id_buy, max_retries=3)
+
+                # Check if the order_details is None
+                if order_details is None:
+                    # Handle the case where wait_for_order did not complete successfully
+                    error_logger.error(f"Closing buy order status not found for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycle_running = False
+                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Closing Buy Order"
+                    info_logger.info(self.cycle_status)
+                    print("Closing buy order failed. Cycle not completed and has been stopped. Cycle set stopped.")
+                    return
+
+                if order_details is not None:
+                    print("Closing cycle buy order completed successfully")           
+        
+                # Process closing cycle buy order amount spent, fees, and amount to be received
+                print("Processing closing cycle buy order assets...")
+                order_processing_params = close_limit_buy_order_processing(close_size_Q, order_details, order_processing_params = {})
+                total_received_B_clb = order_processing_params["total_received_B_clb"]
+                total_spent_Q_clb = order_processing_params["total_spent_Q_clb"]
+                residual_amt_Q_clb = order_processing_params["residual_amt_Q_clb"]
+                self.residual_amt_Q_list.append(residual_amt_Q_clb)
+
+                if order_processing_params is not None:
+                    app_logger.info(f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle{sell_buy_cycle_instance.cycle_number} completed.")
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Completed-Pending Next Opening Sell Order"
+                    info_logger.info(self.cycle_status)
+
+                if order_processing_params is None:
+                    # Handle the case where close_limit_buy_order_processing did not complete successfully
+                    error_logger.error(f"Order processing parameters not found for closing cycle buy order for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set. Check for any open orders related to this request on exchange and handle manually.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycle_running = False  # Set the cycle running status to False
+                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Closing Buy Order"
+                    info_logger.info(self.cycle_status)
+                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
+                    return
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
+
+                # Gather data for logic to determine price for next opening cycle sell order for repeating cycle
+
+            with self.sell_buy_cycleset_lock:
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+                # Print statement to indicate current RSI calculation
+                print("Calculating current RSI...")
+
+                # Calculate current RSI
+                rsi = calculate_rsi(product_id, chart_interval, length=21600)  # 15 days worth of 1-minute data
+                current_rsi = rsi
+                app_logger.info("Current RSI: %s", current_rsi)
+                
+                # Determine next opening cycle sell price
+                print("Determining next opening cycle sell order price...")
+                open_price_sell = determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], iterations=0, depth=0, max_iterations=10, max_depth=1000000)
+                app_logger.info("Opening cycle sell order price determined: %s", open_price_sell)
+
+                if open_price_sell is not None:
+                    # Calculate compounding amount and size for next opening cycle sell order
+                    print("Calculating compounding amount and next opening cycle sell order size...")
+                    compounding_amount_B_ols, no_compounding_B_limit_ols = calculate_open_limit_sell_compounding_amt_B(total_received_B_clb, total_spent_Q_clb, open_price_sell, maker_fee, product_stats["base_increment"])
+                    open_size_B = determine_next_open_size_B_limit(compounding_option, total_received_B_clb, no_compounding_B_limit_ols, compounding_amount_B_ols, compound_percent)
+                
+                if open_price_sell is None:
+                    error_logger.error(f"Failed to determine next opening cycle price for next sell order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+                
+                if open_size_B is not None:
+                    # Append the base currency size value to the history list of the current instance
+                    self.open_size_B_history.append(open_size_B)
+
+                if open_size_B is None:
+                    error_logger.error(f"Opening cycle size could not be determined for openining sell order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
+
+            with thread_lock:
+                print("'sell_buy' thread acquired lock")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
+                # Create a new Cycle instance
+                sell_buy_cycle_instance, self.cycle_number = self.add_cycle(open_size_B, "sell_buy")
+
+                sell_buy_cycle_instance.cycle_number = self.cycle_number
+                
+                # Add the cycle instance to the list in the CycleSet and Cycle
+                self.cycle_instances.append(sell_buy_cycle_instance)
+                sell_buy_cycle_instance.cycle_instances.append(sell_buy_cycle_instance)
+
+                print("Sell_buy cycle completed.")
+                app_logger.info("Opening sell order ID: %s, Closing buy order ID: %s", open_order_id_sell, close_order_id_buy)
+
+                # Call methods on the Cycle instance
+                app_logger.info(f"Starting next sell_buy cycle, Cycle {sell_buy_cycle_instance.cycle_number} of CycleSet {self.cycleset_number} ({self.cycle_type})")
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                print("'sell_buy' thread releasing lock")
+
+            # Increment the recursion depth counter
+            self.recursion_depth += 1
+
+            # Check if the recursion depth exceeds the limit
+            if self.recursion_depth >= RECURSION_LIMIT:
+                print("Recursion limit reached. Stopping recursion.")
+                return open_order_id_sell, close_order_id_buy, None  # Return None for the recursive call
+
+            # Call the next function without handling recursion here
+            next_order_ids = self.place_next_sell_buy_cycle_orders(open_size_B, open_price_sell, sell_buy_cycle_instance)
+            return open_order_id_sell, close_order_id_buy, next_order_ids
+            
+        except requests.exceptions.RequestException as e:
+            # Handle request exceptions
+            error_logger.error(f"An error occurred in place_next_sell_buy_cycle_orders: {e}")
+            error_logger.error(f"Status code: {e.response.status_code}" if hasattr(e, 'response') and e.response is not None else "")
+            # Add additional logging to capture specific details
+            error_logger.exception("RequestException details:", exc_info=True)
+            return None, None, None
+
+        except json.JSONDecodeError as e:
+            # Handle JSON decoding errors
+            error_logger.error(f"Error decoding JSON response in place_next_sell_buy_cycle_orders: {e}")
+            # Add additional logging to capture specific details
+            error_logger.exception("JSONDecodeError details:", exc_info=True)
+            return None, None, None
+
+        except Exception as e:
+            # Handle other unexpected errors
+            error_logger.error(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - An unexpected error occurred in place_next_sell_buy_cycle_orders: {e}")
+            # Add additional logging to capture specific details
+            error_logger.exception("Unexpected error details:", exc_info=True)
+            return None, None, None
+ 
+        
+    def place_next_buy_sell_cycle_orders(self, open_size_Q, open_price_buy, buy_sell_cycle_instance):
+        try:
+            from repeating_cycle_utils import closing_prices, product_stats, lower_bb, long_term_ma24, current_rsi
+
+            # Update 'cycle_number' in the CycleSet class
+            self.cycle_number = buy_sell_cycle_instance.cycle_number
+
+            with thread_lock:
+                print("'buy_sell' thread acquired lock")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
+                with self.buy_sell_cycleset_lock:
+                    # Place next opening cycle buy order
+                    print("Placing the next opening cycle buy order...")
+                    open_order_id_buy = place_next_opening_cycle_buy_order(api_key, api_secret, product_id, open_size_Q, maker_fee, open_price_buy, product_stats)
+                    
+                    if open_order_id_buy is not None:
+                        self.orders.append(open_order_id_buy)
+                        app_logger.info("Opening cycle buy order placed successfully: %s", open_order_id_buy)
+                        self.cycle_running = True  # Set the cycle running status to True
+                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Active-Opening Cycle Buy Order"
+                        app_logger.info(self.cycle_status)
+
+                    if open_order_id_buy is None:
+                        error_logger.error(f"Opening buy order not found for CycleSet {self.cycleset_number} {self.cycle_type}. Stopping the current cycle set.")
+                        return
+                    
+                    print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                    print("'buy_sell' thread releasing lock")
+
+            with self.buy_sell_cycleset_lock:
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")        
+                
+                # Call wait_for_order function
+                order_details = wait_for_order(api_key, api_secret, open_order_id_buy,max_retries=3)
+
+                # Check if the order_details is None
+                if order_details is None:
+                    # Handle the case where wait_for_order did not complete successfully
+                    error_logger.error(f"Opening buy order status not found for CycleSet {self.cycleset_number}({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Opening Cycle Buy Order"
+                    info_logger.info(self.cycle_status)
+                    print("Opening buy order failed. Cycle failed. Cycle set stopped.")
+                    return
+                         
+                # Process opening cycle buy order amount spent, fees, and amount to be received
+                print("Processing opening cycle buy order assets...")
+                order_processing_params = open_limit_buy_order_processing(open_size_Q, order_details, order_processing_params = {})
+                total_received_B_olb = order_processing_params["total_received_B_olb"] 
+                total_spent_Q_olb = order_processing_params["total_spent_Q_olb"]
+                residual_amt_Q_olb = order_processing_params["residual_amt_Q_olb"]
+                self.residual_amt_Q_list.append(residual_amt_Q_olb)
+
+                try:
+                    app_logger.info("Value of order_processing_params: %s", order_processing_params)
+                    if order_processing_params is not None:
+                        # Determine number decimal places of quote_increment (an integer)
+                        decimal_places = get_decimal_places(product_stats['quote_increment'])
+                        # Calculate closing cycle buy price
+                        print("Calculating closing cycle sell price...")
+                        close_price_sell = round(open_price_buy * (1 + profit_percent + (2 * maker_fee)), decimal_places)
+                        app_logger.info("Closing cycle sell price calculated: %s", close_price_sell)
+                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Pending-Closing Sell Order"
+                        info_logger.info(self.cycle_status)
+
+                except Exception as e:
+                        error_logger.error(f"Error in order processing: {e}")
+
+                if order_processing_params is None:
+                    # Handle the case where open_limit_buy_order_processing did not complete successfully
+                    error_logger.error(f"Order processing parameters not found for opening cycle buy order for CycleSet {self.cycleset_number}({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycleset_status = "Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Opening Buy Order"
+                    info_logger.info(self.cycle_status)
+                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")       
+                    return
+                
+                # Calculate closing cycle compounding amount and closing cycle size
+                compounding_amt_B_cls, no_compounding_B_limit_cls = calculate_close_limit_sell_compounding_amt_B(total_received_B_olb, total_spent_Q_olb, close_price_sell, maker_fee, product_stats["base_increment"])
+                close_size_B = determine_next_close_size_B_limit(compounding_option, total_received_B_olb, no_compounding_B_limit_cls, compounding_amt_B_cls, compound_percent)
+
+                if close_size_B is not None:
+                    print("Closing cycle compounding and next size calculated successfully")
+
+                if close_size_B is None:
+                    error_logger.error(f"Closing cycle size could not be determined for closing sell order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
+
+            with thread_lock:
+                print("'buy_sell' thread acquired lock")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
+                # Place closing cycle sell order
+                print("Placing the closing cycle sell order...")
+                close_order_id_sell = place_next_closing_cycle_sell_order(api_key, api_secret, product_id, close_size_B, close_price_sell)
+
+                if close_order_id_sell is not None:
+                    self.orders.append(close_order_id_sell)    
+                    app_logger.info("Closing cycle sell order placed successfully: %s", close_order_id_sell)
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Active-Closing Sell Order"
+                    info_logger.info(self.cycle_status)
+
+                if close_order_id_sell is None:
+                    error_logger.error(f"Closing sell order not found for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                print("'buy_sell' thread releasing lock")
+                
+            with self.buy_sell_cycleset_lock:
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+                
+                # Call wait_for_order function
+                order_details = wait_for_order(api_key, api_secret, close_order_id_sell, max_retries=3)
+
+                # Check if the order_details is None
+                if order_details is None:
+                    # Handle the case where wait_for_order did not complete successfully
+                    error_logger.error(f"Closing sell order status not found for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycle_running = False
+                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type})Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Closing Sell Order"
+                    info_logger.info(self.cycle_status)
+                    print("Closing sell order failed. Cycle not completed and has been stopped. Cycle set stopped.")
+                    return
+
+                if order_details is not None:
+                    print("Closing cycle sell order completed successfully")     
+                
+            
+                # Process closing cycle sell order amount spent, fees, and amount to be received
+
+                print("Processing closing cycle sell order assets...")
+                order_processing_params = close_limit_sell_order_processing(close_size_B, order_details, order_processing_params = {})
+                total_received_Q_cls = order_processing_params["total_received_Q_cls"]
+                total_spent_B_cls = order_processing_params["total_spent_B_cls"]
+                residual_amt_B_cls = order_processing_params["residual_amt_B_cls"]
+                self.residual_amt_B_list.append(residual_amt_B_cls)
+
+                if order_processing_params is not None:
+                    app_logger.info(f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle{buy_sell_cycle_instance.cycle_number} completed.")
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Completed-Pending Next Opening Buy Order"
+                    info_logger.info(self.cycle_status)
+
+                if order_processing_params is None:
+                    # Handle the case where close_limit_sell_order_processing did not complete successfully
+                    error_logger.error(f"Order processing parameters not found for closing cycle sell order for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set. Check for any open orders related to this request on exchange and handle manually.")
+                    self.cycleset_running = False # Set cycle set attribute to not running
+                    self.cycle_running = False  # Set the cycle running status to False
+                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
+                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Closing Sell Order"
+                    info_logger.info(self.cycle_status)
+                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
+                    return
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
+            
+                # Gather data for logic to determine price for next opening cycle buy order for repeating cycle
+
+            with self.buy_sell_cycleset_lock:
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+                # Print statement to indicate current RSI calculation
+                print("Calculating current RSI...")
+
+                # Calculate current RSI
+                rsi = calculate_rsi(product_id, chart_interval, length=21600)  # 15 days worth of 1-minute data
+                current_rsi = rsi
+                app_logger.info("Current RSI: %s", current_rsi)
+
+                
+                # Determine next opening cycle buy price
+                print("Determining next opening cycle buy order price...")
+                open_price_buy = determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], iterations=0, depth=0, max_iterations=10, max_depth=1000000)
+                app_logger.info("Opening cycle buy order price determined: %s", open_price_buy)
+
+                if open_price_buy is not None:
+                    # Calculate compounding amount and size for next opening cycle buy order
+                    print("Calculating compounding amount and next opening cycle buy order size...")
+                    compounding_amount_Q_olb, no_compounding_Q_limit_olb = calculate_open_limit_buy_compounding_amt_Q(total_received_Q_cls, total_spent_B_cls, open_price_buy, maker_fee, product_stats["quote_increment"])
+                    open_size_Q = determine_next_open_size_Q_limit(compounding_option, total_received_Q_cls, no_compounding_Q_limit_olb, compounding_amount_Q_olb, compound_percent)
+                
+                if open_price_buy is None:
+                    error_logger.error(f"Failed to determine opening cycle price for next buy order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+            
+                if open_size_Q is not None:
+                    # Append the quote currency size value to the history list of the current instance
+                    self.open_size_Q_history.append(open_size_Q)
+
+                if open_size_Q is None:
+                    error_logger.error(f"Opening cycle size could not be determined for opening buy order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
+                    return
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
+
+            with thread_lock:
+                print("'buy_sell' thread acquired lock")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")        
+                # Create a new Cycle instance
+                buy_sell_cycle_instance, self.cycle_number = self.add_cycle(open_size_Q, "buy_sell")
+
+                buy_sell_cycle_instance.cycle_number = self.cycle_number
+
+                # Add the cycle instance to the list in the CycleSet and Cycle
+                self.cycle_instances.append(buy_sell_cycle_instance)
+                buy_sell_cycle_instance.cycle_instances.append(buy_sell_cycle_instance)
+               
+                print("Buy_sell cycle completed.")
+                app_logger.info("Opening buy order ID: %s, Closing sell order ID: %s", open_order_id_buy, close_order_id_sell)
+                
+                # Call methods on the Cycle instance
+                app_logger.info(f"Starting next buy_sell cycle, Cycle {buy_sell_cycle_instance.cycle_number} of CycleSet {self.cycleset_number}")
+                
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                print("'buy_sell' thread releasing lock")
+                
+            # Increment the recursion depth counter
+            self.recursion_depth += 1
+
+            # Check if the recursion depth exceeds the limit
+            if self.recursion_depth >= RECURSION_LIMIT:
+                print("Recursion limit reached. Stopping recursion.")
+                return open_order_id_buy, close_order_id_sell, None  # Return None for the recursive call
+
+            # Call the next function without handling recursion here
+            next_order_ids = self.place_next_buy_sell_cycle_orders(open_size_Q, open_price_buy, buy_sell_cycle_instance)
+            return open_order_id_buy, close_order_id_sell, next_order_ids
+            
+        except requests.exceptions.RequestException as e:
+            # Handle request exceptions
+            error_logger.error(f"An error occurred in place_next_buy_sell_cycle_orders: {e}")
+            error_logger.error(f"Status code: {e.response.status_code}" if hasattr(e, 'response') and e.response is not None else "")
+            # Add additional logging to capture specific details
+            error_logger.exception("RequestException details:", exc_info=True)
+            return None, None, None
+
+        except json.JSONDecodeError as e:
+            # Handle JSON decoding errors
+            error_logger.error(f"Error decoding JSON response in place_next_buy_sell_cycle_orders: {e}")
+            # Add additional logging to capture specific details
+            error_logger.exception("JSONDecodeError details:", exc_info=True)
+            return None, None, None
+
+        except Exception as e:
+            # Handle other unexpected errors
+            error_logger.error(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - An unexpected error occurred in place_next_buy_sell_cycle_orders: {e}")
+            # Add additional logging to capture specific details
+            error_logger.exception("Unexpected error details:", exc_info=True)
+            return None, None, None
+
     def place_starting_sell_buy_cycle_orders(self, starting_size_B, sell_buy_cycle_instance):
+
         try:
             from repeating_cycle_utils import product_stats, upper_bb, lower_bb, long_term_ma24, current_rsi
 
@@ -226,7 +746,7 @@ class CycleSet:
             
             self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Started"
             self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Pending-Starting Opening Sell Order"
-            info_logger.info(self.cycle_status)
+            app_logger.info(self.cycle_status)
 
             with thread_lock:
                 print("'sell_buy' thread acquired lock")
@@ -250,16 +770,18 @@ class CycleSet:
                         self.cycle_running = True  # Set the cycle running status to True
                         self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Active"
                         self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Active-Starting Opening Sell Order"
+                        info_logger.info(self.cycle_status)
 
                     if open_order_id_sell is None:
                         error_logger.error(f"Starting opening sell order not found for CycleSet {self.cycleset_number} {self.cycle_type}. Stopping the current cycle set.")
                         return
                     
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'sell_buy' thread releasing lock")
-                
+                    print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                    print("'sell_buy' thread releasing lock")
+
             with self.sell_buy_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")  
+
                 # Call wait_for_order function
                 order_details = wait_for_order(api_key, api_secret, open_order_id_sell, max_retries=3)
 
@@ -270,9 +792,10 @@ class CycleSet:
                     self.cycleset_running = False # Set cycle set attribute to not running
                     self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Opening Sell Order"
+                    info_logger.info(self.cycle_status)
                     print("Starting opening sell order failed. Cycle failed. Cycle set stopped.")
                     return
-
+                
                 # Process starting opening cycle sell order amount spent, fees, and amount to be received
                 print("Processing starting opening cycle sell order assets...")
                 order_processing_params = open_limit_sell_order_processing(starting_size_B, order_details, order_processing_params = {})
@@ -291,7 +814,8 @@ class CycleSet:
                         close_price_buy = round(starting_price_sell * (1 - profit_percent - (2 * maker_fee)), decimal_places)
                         app_logger.info("Closing cycle buy price calculated: %s", close_price_buy)
                         self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {self.cycle_number}: Pending-Starting Closing Buy Order"
-                
+                        info_logger.info(self.cycle_status)
+
                 except Exception as e:
                     error_logger.error(f"Error in order processing: {e}")
 
@@ -301,6 +825,7 @@ class CycleSet:
                     self.cycleset_running = False # Set cycle set attribute to not running
                     self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {self.cycle_number}: Failed-Starting Opening Sell Order"
+                    info_logger.info(self.cycle_status)
                     print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")       
                     return
                 
@@ -328,7 +853,8 @@ class CycleSet:
                     self.orders.append(close_order_id_buy)    
                     app_logger.info("Starting closing cycle buy order placed successfully: %s", close_order_id_buy)
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Active-Starting Closing Buy Order"
-                
+                    info_logger.info(self.cycle_status)
+
                 if close_order_id_buy is None:
                     error_logger.error(f"Starting closing buy order not found for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
                     return
@@ -337,7 +863,8 @@ class CycleSet:
                 print("'sell_buy' thread releasing lock")
 
             with self.sell_buy_cycleset_lock: 
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")   
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+
                 # Call wait_for_order function
                 order_details = wait_for_order(api_key, api_secret, close_order_id_buy, max_retries=3)
 
@@ -349,24 +876,26 @@ class CycleSet:
                     self.cycle_running = False
                     self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Closing Buy Order"
+                    info_logger.info(self.cycle_status)
                     print("Starting closing buy order failed. Cycle not completed and has been stopped. Cycle set stopped.")
                     return
                 
                 if order_details is not None:
-                    print("Starting closing cycle buy order completed successfully")
-
-                    # Process starting closing cycle buy order amount spent, fees, and amount to be received
-                    print("Processing starting closing cycle buy order assets...")
-                    close_size_Q = next_size_Q
-                    order_processing_params = close_limit_buy_order_processing(close_size_Q, order_details, order_processing_params = {})
-                    total_received_B_clb = order_processing_params["total_received_B_clb"]
-                    total_spent_Q_clb = order_processing_params["total_spent_Q_clb"]
-                    residual_amt_Q_clb = order_processing_params["residual_amt_Q_clb"]
-                    self.residual_amt_Q_list.append(residual_amt_Q_clb)
+                    print("Starting closing cycle buy order completed successfully")               
+        
+                # Process starting closing cycle buy order amount spent, fees, and amount to be received
+                print("Processing starting closing cycle buy order assets...")
+                close_size_Q = next_size_Q
+                order_processing_params = close_limit_buy_order_processing(close_size_Q, order_details, order_processing_params = {})
+                total_received_B_clb = order_processing_params["total_received_B_clb"]
+                total_spent_Q_clb = order_processing_params["total_spent_Q_clb"]
+                residual_amt_Q_clb = order_processing_params["residual_amt_Q_clb"]
+                self.residual_amt_Q_list.append(residual_amt_Q_clb)
 
                 if order_processing_params is not None:
                     print("Starting sell_buy cycle completed.")
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Pending-Next Opening Sell Order"
+                    info_logger.info(self.cycle_status)
 
                 if order_processing_params is None:
                     # Handle the case where open_limit_sell_order_processing did not complete successfully
@@ -375,6 +904,7 @@ class CycleSet:
                     self.cycle_running = False  # Set the cycle running status to False
                     self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Closing Buy Order"
+                    info_logger.info(self.cycle_status)
                     print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
                     return
                 
@@ -388,13 +918,13 @@ class CycleSet:
                 print("Calculating current RSI...")
 
                 # Calculate current RSI
-                rsi = calculate_rsi(product_id, chart_interval, length=20160)  # 15 days worth of 1-minute data
+                rsi = calculate_rsi(product_id, chart_interval, length=21600)  # 15 days worth of 1-minute data
                 current_rsi = rsi
                 app_logger.info("Current RSI: %s", current_rsi)
 
                 # Determine next opening cycle sell price
                 print("Determining next opening cycle sell order price...")
-                open_price_sell = determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], max_iterations=10)
+                open_price_sell = determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], iterations=0, depth=0, max_iterations=10, max_depth=1000000)
                 app_logger.info("Opening cycle sell order price determined: %s", open_price_sell)
 
                 if open_price_sell is not None:
@@ -422,11 +952,11 @@ class CycleSet:
                 print("'sell_buy' thread acquired lock")
                 print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
                 # Create a Cycle instance
-                sell_buy_cycle_instance, self.cycle_number= self.add_cycle(open_size_B, "sell_buy")
+                sell_buy_cycle_instance, self.cycle_number = self.add_cycle(open_size_B, "sell_buy")
                 app_logger.info("sell_buy_cycle_instance: %s", sell_buy_cycle_instance )
 
                 sell_buy_cycle_instance.cycle_number = self.cycle_number
-               
+            
                 # Add the cycle instance to the list in the CycleSet and Cycle
                 self.cycle_instances.append(sell_buy_cycle_instance)
                 sell_buy_cycle_instance.cycle_instances.append(sell_buy_cycle_instance)
@@ -434,28 +964,40 @@ class CycleSet:
                 print("Starting sell_buy cycle completed.")
                 app_logger.info("Opening sell order ID: %s, Closing buy order ID: %s", open_order_id_sell, close_order_id_buy)
 
-                # Pass the new cycle instance to the next iteraation of cycle order creation
+                # Pass the new cycle instance to the next iteration of cycle order creation
                 app_logger.info(f"Starting next sell_buy cycle, Cycle {sell_buy_cycle_instance.cycle_number} of CycleSet {self.cycleset_number} {self.cycle_type}")
-                self.place_next_sell_buy_cycle_orders(open_size_B, open_price_sell, sell_buy_cycle_instance)
                 
                 print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
                 print("'sell_buy' thread releasing lock")
-                
-                return open_order_id_sell, close_order_id_buy       
-            
+
+            # Increment the recursion depth counter
+            self.recursion_depth += 1
+
+            # Call the next function without handling recursion here
+            next_order_ids = self.place_next_sell_buy_cycle_orders(open_size_B, open_price_sell, sell_buy_cycle_instance)
+            return open_order_id_sell, close_order_id_buy, next_order_ids
+        
         except requests.exceptions.RequestException as e:
             # Handle request exceptions
             error_logger.error(f"An error occurred in place_starting_sell_buy_cycle_orders: {e}")
             error_logger.error(f"Status code: {e.response.status_code}" if hasattr(e, 'response') and e.response is not None else "")
-            return 
+            # Add additional logging to capture specific details
+            error_logger.exception("RequestException details:", exc_info=True)
+            return None, None, None
+
         except json.JSONDecodeError as e:
             # Handle JSON decoding errors
             error_logger.error(f"Error decoding JSON response in place_starting_sell_buy_cycle_orders: {e}")
-            return 
+            # Add additional logging to capture specific details
+            error_logger.exception("JSONDecodeError details:", exc_info=True)
+            return None, None, None
+
         except Exception as e:
             # Handle other unexpected errors
             error_logger.error(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - An unexpected error occurred in place_starting_sell_buy_cycle_orders: {e}")
-            return 
+            # Add additional logging to capture specific details
+            error_logger.exception("Unexpected error details:", exc_info=True)
+            return None, None, None
 
     def place_starting_buy_sell_cycle_orders(self, starting_size_Q, buy_sell_cycle_instance):
         try:
@@ -466,7 +1008,7 @@ class CycleSet:
 
             self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Started"
             self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Pending-Starting Opening Buy Order"
-            info_logger.info(self.cycle_status)
+            app_logger.info(self.cycle_status)
 
             with thread_lock:
                 print("'buy_sell' thread acquired lock")
@@ -490,16 +1032,18 @@ class CycleSet:
                         self.cycle_running = True  # Set the cycle running status to True
                         self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Active"
                         self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Active-Starting Opening Buy Order"
+                        info_logger.info(self.cycle_status)
 
                     if open_order_id_buy is None:
                         error_logger.error(f"Starting opening buy order not found for CycleSet {self.cycleset_number} {self.cycle_type}. Stopping the current cycle set.")
                         return
                     
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'buy_sell' thread releasing lock")
-                    
+                    print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
+                    print("'buy_sell' thread releasing lock")
+
             with self.buy_sell_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")    
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+
                 # Call wait_for_order function
                 order_details = wait_for_order(api_key, api_secret, open_order_id_buy, max_retries=3)
 
@@ -510,8 +1054,9 @@ class CycleSet:
                     self.cycleset_running = False # Set cycle set attribute to not running
                     self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Opening Buy Order"
+                    info_logger.info(self.cycle_status)
                     print("Starting opening buy order failed. Cycle failed. Cycle set stopped.")
-                    return            
+                    return                          
 
                 # Process starting opening cycle buy order amount spent, fees, and amount to be received
                 print("Processing starting opening cycle buy order assets...")
@@ -531,7 +1076,8 @@ class CycleSet:
                         close_price_sell = round(starting_price_buy * (1 + profit_percent + (2 * maker_fee)), decimal_places)
                         app_logger.info("Closing cycle sell price calculated: %s", close_price_sell)
                         self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Pending-Starting Closing Sell Order"
-                
+                        info_logger.info(self.cycle_status)
+
                 except Exception as e:
                     error_logger.error(f"Error in order processing: {e}")
                     return
@@ -542,6 +1088,7 @@ class CycleSet:
                     self.cycleset_running = False # Set cycle set attribute to not running
                     self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Opening Buy Order"
+                    info_logger.info(self.cycle_status)
                     print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
                     return 
                 
@@ -569,6 +1116,7 @@ class CycleSet:
                     self.orders.append(close_order_id_sell)    
                     app_logger.info("Starting closing cycle sell order placed successfully: %s", close_order_id_sell)
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Active-Starting Closing Sell Order"
+                    info_logger.info(self.cycle_status)
 
                 if close_order_id_sell is None:
                     error_logger.error(f"Starting closing sell order not found for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
@@ -576,9 +1124,10 @@ class CycleSet:
 
                 print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
                 print("'buy_sell' thread releasing lock")
-                    
+                
             with self.buy_sell_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")    
+                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
+
                 # Call wait_for_order function
                 order_details = wait_for_order(api_key, api_secret, close_order_id_sell, max_retries=3)
 
@@ -590,24 +1139,26 @@ class CycleSet:
                     self.cycle_running = False
                     self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Closing Sell Order"
+                    info_logger.info(self.cycle_status)
                     print("Starting closing sell order failed. Cycle not completed and has been stopped. Cycle set stopped.")
                     return
                 
                 if order_details is not None:
-                    print("Starting closing cycle sell order completed successfully")
-
-                    # Process starting closing cycle sell order amount spent, fees, and amount to be received
-                    print("Processing starting closing cycle sell order assets...")
-                    close_size_B = next_size_B
-                    order_processing_params = close_limit_sell_order_processing(close_size_B, order_details, order_processing_params = {})
-                    total_received_Q_cls = order_processing_params["total_received_Q_cls"]
-                    total_spent_B_cls = order_processing_params["total_spent_B_cls"]
-                    residual_amt_B_cls = order_processing_params["residual_amt_B_cls"]
-                    self.residual_amt_B_list.append(residual_amt_B_cls)
+                    print("Starting closing cycle sell order completed successfully")            
+                    
+                # Process starting closing cycle sell order amount spent, fees, and amount to be received
+                print("Processing starting closing cycle sell order assets...")
+                close_size_B = next_size_B
+                order_processing_params = close_limit_sell_order_processing(close_size_B, order_details, order_processing_params = {})
+                total_received_Q_cls = order_processing_params["total_received_Q_cls"]
+                total_spent_B_cls = order_processing_params["total_spent_B_cls"]
+                residual_amt_B_cls = order_processing_params["residual_amt_B_cls"]
+                self.residual_amt_B_list.append(residual_amt_B_cls)
 
                 if order_processing_params is not None:
                     print("Starting buy_sell cycle completed.")
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Completed-Pending-Next Opening Buy Order"
+                    info_logger.info(self.cycle_status)
 
                 if order_processing_params is None:
                     # Handle the case where open_limit_buy_order_processing did not complete successfully
@@ -616,6 +1167,7 @@ class CycleSet:
                     self.cycle_running = False  # Set the cycle running status to False
                     self.cycleset_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Failed"
                     self.cycle_status = f"CyclSet {self.cycleset_number} {self.cycle_type} Cycle {self.cycle_number}: Failed-Starting Closing Sell Order"
+                    info_logger.info(self.cycle_status)
                     print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
                     return
 
@@ -629,13 +1181,13 @@ class CycleSet:
                 print("Calculating current RSI...")
 
                 # Calculate current RSI
-                rsi = calculate_rsi(product_id, chart_interval, length=20160)  # 15 days worth of 1-minute data
+                rsi = calculate_rsi(product_id, chart_interval, length=21600)  # 15 days worth of 1-minute data
                 current_rsi = rsi
                 app_logger.info("Current RSI: %s", current_rsi)
 
                 # Determine next opening cycle sell price
                 print("Determining next opening cycle buy order price...")
-                open_price_buy = determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], max_iterations=10)
+                open_price_buy = determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], iterations=0, depth=0, max_iterations=10, max_depth=1000000)
                 app_logger.info("Opening cycle buy order price determined: %s", open_price_buy)
 
                 if open_price_buy is not None:
@@ -677,26 +1229,38 @@ class CycleSet:
 
                 # Pass the new cycle instance to the next iteraation of cycle order creation
                 app_logger.info(f"Starting next buy_sell cycle, Cycle {buy_sell_cycle_instance.cycle_number} of CycleSet {self.cycleset_number} {self.cycle_type}")
-                self.place_next_buy_sell_cycle_orders(open_size_Q, open_price_buy, buy_sell_cycle_instance)
                 
                 print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
                 print("'buy_sell' thread releasing lock")
-               
-                return open_order_id_buy, close_order_id_sell
+
+            # Increment the recursion depth counter
+            self.recursion_depth += 1
+            
+            # Call the next function without handling recursion here
+            next_order_ids = self.place_next_buy_sell_cycle_orders(open_size_Q, open_price_buy, buy_sell_cycle_instance)
+            return open_order_id_buy, close_order_id_sell, next_order_ids
         
         except requests.exceptions.RequestException as e:
             # Handle request exceptions
             error_logger.error(f"An error occurred in place_starting_buy_sell_cycle_orders: {e}")
             error_logger.error(f"Status code: {e.response.status_code}" if hasattr(e, 'response') and e.response is not None else "")
-            return 
+            # Add additional logging to capture specific details
+            error_logger.exception("RequestException details:", exc_info=True)
+            return None, None, None
+
         except json.JSONDecodeError as e:
             # Handle JSON decoding errors
             error_logger.error(f"Error decoding JSON response in place_starting_buy_sell_cycle_orders: {e}")
-            return 
+            # Add additional logging to capture specific details
+            error_logger.exception("JSONDecodeError details:", exc_info=True)
+            return None, None, None
+
         except Exception as e:
             # Handle other unexpected errors
             error_logger.error(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - An unexpected error occurred in place_starting_buy_sell_cycle_orders: {e}")
-            return  
+            # Add additional logging to capture specific details
+            error_logger.exception("Unexpected error details:", exc_info=True)
+            return None, None, None  
     
     def start_sell_buy_starting_cycle(self, user_config, sell_buy_cycle_set_counter):
         with sell_buy_cycle_start_lock:
@@ -829,458 +1393,6 @@ class CycleSet:
     
         info_logger.info("Cycle set data: %s", cycleset_data)
         return cycleset_data
-    
-    def place_next_sell_buy_cycle_orders(self, open_size_B, open_price_sell, sell_buy_cycle_instance):
-        try:
-            from repeating_cycle_utils import closing_prices, product_stats, upper_bb, long_term_ma24, current_rsi
-
-            # Update 'cycle_number' in the CycleSet class
-            self.cycle_number = sell_buy_cycle_instance.cycle_number
-
-            with thread_lock:
-                print("'sell_buy' thread acquired lock")
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
-                with self.sell_buy_cycleset_lock:
-                    # Place next opening cycle sell order
-                    print("Placing the next opening cycle sell order...")
-                    open_order_id_sell = place_next_opening_cycle_sell_order(api_key, api_secret, product_id, open_size_B, open_price_sell)
-                    
-                    if open_order_id_sell is not None:
-                        self.orders.append(open_order_id_sell)
-                        app_logger.info("Opening cycle sell order placed successfully: %s", open_order_id_sell)
-                        self.cycle_running = True  # Set the cycle running status to True
-                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Active-Opening Cycle Sell Order"
-                        print(self.cycle_status)
-
-                    if open_order_id_sell is None:
-                        error_logger.error(f"Opening cycle sell order not found for CycleSet {self.cycleset_number} {self.cycle_type}. Stopping the current cycle set.")
-                        return
-
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'sell_buy' thread releasing lock")
-
-            with self.sell_buy_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
-                # Call wait_for_order function
-                order_details = wait_for_order(api_key, api_secret, open_order_id_sell, max_retries=3)
-
-                # Check if the order_details is None
-                if order_details is None:
-                    # Handle the case where wait_for_order did not complete successfully
-                    error_logger.error(f"Opening sell order status not found for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Opening Cycle Sell Order"
-                    print("Opening sell order failed. Cycle failed. Cycle set stopped.")
-                    return
-
-                # Process opening cycle sell order amount spent, fees, and amount to be received
-                print("Processing opening cycle sell order assets...")
-                order_processing_params = open_limit_sell_order_processing(open_size_B, order_details, order_processing_params = {})
-                total_received_Q_ols = order_processing_params["total_received_Q_ols"] 
-                total_spent_B_ols = order_processing_params["total_spent_B_ols"]
-                residual_amt_B_ols = order_processing_params["residual_amt_B_ols"]
-                self.residual_amt_B_list.append(residual_amt_B_ols)
-
-                try:
-                    app_logger.info("Value of order_processing_params: %s", order_processing_params)
-                    if order_processing_params is not None:
-                        # Determine number decimal places of quote_increment (an integer)
-                        decimal_places = get_decimal_places(product_stats['quote_increment'])
-                        # Calculate closing cycle buy price
-                        print("Calculating closing cycle buy price...")
-                        close_price_buy = round(open_price_sell * (1 - profit_percent - (2 * maker_fee)), decimal_places)
-                        app_logger.info("Closing cycle buy price calculated: %s", close_price_buy)
-                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Pending-Closing Buy Order"
-                
-                except Exception as e:
-                        error_logger.error(f"Error in order processing: {e}")
-
-                if order_processing_params is None:
-                    # Handle the case where open_limit_sell_order_processing did not complete successfully
-                    error_logger.error(f"Order processing parameters not found for opening cycle sell order for CycleSet {self.cycleset_number}({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycleset_status = "Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Opening Sell Order"
-                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")       
-                    return
-                
-                # Calculate starting (cycle 1) close cycle compounding amount and next starting close cycle size
-                compounding_amt_Q_clb, no_compounding_Q_limit_clb = calculate_close_limit_buy_compounding_amt_Q(total_received_Q_ols, total_spent_B_ols, close_price_buy, maker_fee, product_stats["quote_increment"])
-                close_size_Q = determine_next_close_size_Q_limit(compounding_option, total_received_Q_ols, no_compounding_Q_limit_clb, compounding_amt_Q_clb, compound_percent)
-
-                if close_size_Q is not None:
-                    print("Closing cycle compounding and next size calculated successfully")
-
-                if close_size_Q is None:
-                    error_logger.error(f"Closing cycle size could not be determined for closing buy order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
-
-            with thread_lock:
-                print("'sell_buy' thread acquired lock")
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
-                # Place closing cycle buy order
-                print("Placing the closing cycle buy order...")
-                close_order_id_buy = place_next_closing_cycle_buy_order(api_key, api_secret, product_id, close_size_Q, maker_fee, close_price_buy, product_stats)
-
-                if close_order_id_buy is not None:
-                    self.orders.append(close_order_id_buy)    
-                    app_logger.info("Closing cycle buy order placed successfully: %s", close_order_id_buy)
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Active-Closing Buy Order"
-                
-                if close_order_id_buy is None:
-                    error_logger.error(f"Closing buy order not found for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-            
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'sell_buy' thread releasing lock")
-
-            with self.sell_buy_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
-                # Call wait_for_order function
-                order_details = wait_for_order(api_key, api_secret, close_order_id_buy, max_retries=3)
-
-                # Check if the order_details is None
-                if order_details is None:
-                    # Handle the case where wait_for_order did not complete successfully
-                    error_logger.error(f"Closing buy order status not found for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycle_running = False
-                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Closing Buy Order"
-                    print("Closing buy order failed. Cycle not completed and has been stopped. Cycle set stopped.")
-                    return
-
-                if order_details is not None:
-                    print("Closing cycle buy order completed successfully")
-            
-                    # Process closing cycle buy order amount spent, fees, and amount to be received
-                    print("Processing closing cycle buy order assets...")
-                    order_processing_params = close_limit_buy_order_processing(close_size_Q, order_details, order_processing_params = {})
-                    total_received_B_clb = order_processing_params["total_received_B_clb"]
-                    total_spent_Q_clb = order_processing_params["total_spent_Q_clb"]
-                    residual_amt_Q_clb = order_processing_params["residual_amt_Q_clb"]
-                    self.residual_amt_Q_list.append(residual_amt_Q_clb)
-
-                if order_processing_params is not None:
-                    app_logger.info(f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle{sell_buy_cycle_instance.cycle_number} completed.")
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Completed-Pending Next Opening Sell Order"
-
-                if order_processing_params is None:
-                    # Handle the case where close_limit_buy_order_processing did not complete successfully
-                    error_logger.error(f"Order processing parameters not found for closing cycle buy order for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}. Stopping the current cycle set. Check for any open orders related to this request on exchange and handle manually.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycle_running = False  # Set the cycle running status to False
-                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {sell_buy_cycle_instance.cycle_number}: Failed-Closing Buy Order"
-                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
-                    return
-                
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
-
-                # Gather data for logic to determine price for next opening cycle sell order for repeating cycle
-
-            with self.sell_buy_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
-                # Print statement to indicate current RSI calculation
-                print("Calculating current RSI...")
-
-                # Calculate current RSI
-                rsi = calculate_rsi(product_id, chart_interval, length=20160)  # 15 days worth of 1-minute data
-                current_rsi = rsi
-                app_logger.info("Current RSI: %s", current_rsi)
-
-                
-                # Determine next opening cycle sell price
-                print("Determining next opening cycle sell order price...")
-                open_price_sell = determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, product_stats["quote_increment"], max_iterations=10)
-                app_logger.info("Opening cycle sell order price determined: %s", open_price_sell)
-
-                if open_price_sell is not None:
-                    # Calculate compounding amount and size for next opening cycle sell order
-                    print("Calculating compounding amount and next opening cycle sell order size...")
-                    compounding_amount_B_ols, no_compounding_B_limit_ols = calculate_open_limit_sell_compounding_amt_B(total_received_B_clb, total_spent_Q_clb, open_price_sell, maker_fee, product_stats["base_increment"])
-                    open_size_B = determine_next_open_size_B_limit(compounding_option, total_received_B_clb, no_compounding_B_limit_ols, compounding_amount_B_ols, compound_percent)
-                
-                if open_price_sell is None:
-                    error_logger.error(f"Failed to determine next opening cycle price for next sell order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-                
-                if open_size_B is not None:
-                    # Append the base currency size value to the history list of the current instance
-                    self.open_size_B_history.append(open_size_B)
-
-                if open_size_B is None:
-                    error_logger.error(f"Opening cycle size could not be determined for openining sell order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-                
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
-
-            with thread_lock:
-                print("'sell_buy' thread acquired lock")
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
-                # Create a new Cycle instance
-                sell_buy_cycle_instance, self.cycle_number = self.add_cycle(open_size_B, "sell_buy")
-
-                sell_buy_cycle_instance.cycle_number = self.cycle_number
-                
-                # Add the cycle instance to the list in the CycleSet and Cycle
-                self.cycle_instances.append(sell_buy_cycle_instance)
-                sell_buy_cycle_instance.cycle_instances.append(sell_buy_cycle_instance)
-
-                print("Sell_buy cycle completed.")
-                app_logger.info("Opening sell order ID: %s, Closing buy order ID: %s", open_order_id_sell, close_order_id_buy)
-
-                # Call methods on the Cycle instance
-                app_logger.info(f"Starting next sell_buy cycle, Cycle {sell_buy_cycle_instance.cycle_number} of CycleSet {self.cycleset_number} ({self.cycle_type})")
-                self.place_next_sell_buy_cycle_orders(open_size_B, open_price_sell, sell_buy_cycle_instance)
-                
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'sell_buy' thread releasing lock")
-
-                return open_order_id_sell, close_order_id_buy
-        
-        except requests.exceptions.RequestException as e:
-            # Handle request exceptions
-            error_logger.error(f"An error occurred in place_next_sell_buy_cycle_orders: {e}")
-            error_logger.error(f"Status code: {e.response.status_code}" if hasattr(e, 'response') and e.response is not None else "")
-            return 
-        except json.JSONDecodeError as e:
-            # Handle JSON decoding errors
-            error_logger.error(f"Error decoding JSON response in place_next_sell_buy_cycle_orders: {e}")
-            return 
-        except Exception as e:
-            # Handle other unexpected errors
-            error_logger.error(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - An unexpected error occurred in place_next_sell_buy_cycle_orders: {e}")
-            return  
-        
-    def place_next_buy_sell_cycle_orders(self, open_size_Q, open_price_buy, buy_sell_cycle_instance):
-        try:
-            from repeating_cycle_utils import closing_prices, product_stats, lower_bb, long_term_ma24, current_rsi
-
-            # Update 'cycle_number' in the CycleSet class
-            self.cycle_number = buy_sell_cycle_instance.cycle_number
-
-            with thread_lock:
-                print("'buy_sell' thread acquired lock")
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
-                with self.buy_sell_cycleset_lock:
-                    # Place next opening cycle buy order
-                    print("Placing the next opening cycle buy order...")
-                    open_order_id_buy = place_next_opening_cycle_buy_order(api_key, api_secret, product_id, open_size_Q, maker_fee, open_price_buy, product_stats)
-                    
-                    if open_order_id_buy is not None:
-                        self.orders.append(open_order_id_buy)
-                        app_logger.info("Opening cycle buy order placed successfully: %s", open_order_id_buy)
-                        self.cycle_running = True  # Set the cycle running status to True
-                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Active-Opening Cycle Buy Order"
-                        print (self.cycle_status)
-
-                    if open_order_id_buy is None:
-                        error_logger.error(f"Opening buy order not found for CycleSet {self.cycleset_number} {self.cycle_type}. Stopping the current cycle set.")
-                        return
-                    
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'buy_sell' thread releasing lock")
-
-            with self.buy_sell_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
-                # Call wait_for_order function
-                order_details = wait_for_order(api_key, api_secret, open_order_id_buy,max_retries=3)
-
-                # Check if the order_details is None
-                if order_details is None:
-                    # Handle the case where wait_for_order did not complete successfully
-                    error_logger.error(f"Opening buy order status not found for CycleSet {self.cycleset_number}({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Opening Cycle Buy Order"
-                    print("Opening buy order failed. Cycle failed. Cycle set stopped.")
-                    return
-
-                # Process opening cycle buy order amount spent, fees, and amount to be received
-                print("Processing opening cycle buy order assets...")
-                order_processing_params = open_limit_buy_order_processing(open_size_Q, order_details, order_processing_params = {})
-                total_received_B_olb = order_processing_params["total_received_B_olb"] 
-                total_spent_Q_olb = order_processing_params["total_spent_Q_olb"]
-                residual_amt_Q_olb = order_processing_params["residual_amt_Q_olb"]
-                self.residual_amt_Q_list.append(residual_amt_Q_olb)
-
-                try:
-                    app_logger.info("Value of order_processing_params: %s", order_processing_params)
-                    if order_processing_params is not None:
-                        # Determine number decimal places of quote_increment (an integer)
-                        decimal_places = get_decimal_places(product_stats['quote_increment'])
-                        # Calculate closing cycle buy price
-                        print("Calculating closing cycle sell price...")
-                        close_price_sell = round(open_price_buy * (1 + profit_percent + (2 * maker_fee)), decimal_places)
-                        app_logger.info("Closing cycle sell price calculated: %s", close_price_sell)
-                        self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Pending-Closing Sell Order"
-                
-                except Exception as e:
-                        error_logger.error(f"Error in order processing: {e}")
-
-                if order_processing_params is None:
-                    # Handle the case where open_limit_buy_order_processing did not complete successfully
-                    error_logger.error(f"Order processing parameters not found for opening cycle buy order for CycleSet {self.cycleset_number}({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycleset_status = "Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Opening Buy Order"
-                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")       
-                    return
-                
-                # Calculate closing cycle compounding amount and closing cycle size
-                compounding_amt_B_cls, no_compounding_B_limit_cls = calculate_close_limit_sell_compounding_amt_B(total_received_B_olb, total_spent_Q_olb, close_price_sell, maker_fee, product_stats["base_increment"])
-                close_size_B = determine_next_close_size_B_limit(compounding_option, total_received_B_olb, no_compounding_B_limit_cls, compounding_amt_B_cls, compound_percent)
-
-                if close_size_B is not None:
-                    print("Closing cycle compounding and next size calculated successfully")
-
-                if close_size_B is None:
-                    error_logger.error(f"Closing cycle size could not be determined for closing sell order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
-
-            with thread_lock:
-                print("'buy_sell' thread acquired lock")
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")
-                # Place closing cycle sell order
-                print("Placing the closing cycle sell order...")
-                close_order_id_sell = place_next_closing_cycle_sell_order(api_key, api_secret, product_id, close_size_B, close_price_sell)
-
-                if close_order_id_sell is not None:
-                    self.orders.append(close_order_id_sell)    
-                    app_logger.info("Closing cycle sell order placed successfully: %s", close_order_id_sell)
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Active-Closing Sell Order"
-                
-                if close_order_id_sell is None:
-                    error_logger.error(f"Closing sell order not found for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'buy_sell' thread releasing lock")
-
-            with self.buy_sell_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
-                # Call wait_for_order function
-                order_details = wait_for_order(api_key, api_secret, close_order_id_sell, max_retries=3)
-
-                # Check if the order_details is None
-                if order_details is None:
-                    # Handle the case where wait_for_order did not complete successfully
-                    error_logger.error(f"Closing sell order status not found for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycle_running = False
-                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type})Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Closing Sell Order"
-                    print("Closing sell order failed. Cycle not completed and has been stopped. Cycle set stopped.")
-                    return
-
-                if order_details is not None:
-                    print("Closing cycle sell order completed successfully")
-            
-                    # Process closing cycle sell order amount spent, fees, and amount to be received
-                    print("Processing closing cycle sell order assets...")
-                    order_processing_params = close_limit_sell_order_processing(close_size_B, order_details, order_processing_params = {})
-                    total_received_Q_cls = order_processing_params["total_received_Q_cls"]
-                    total_spent_B_cls = order_processing_params["total_spent_B_cls"]
-                    residual_amt_B_cls = order_processing_params["residual_amt_B_cls"]
-                    self.residual_amt_B_list.append(residual_amt_B_cls)
-
-                if order_processing_params is not None:
-                    app_logger.info(f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle{buy_sell_cycle_instance.cycle_number} completed.")
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Completed-Pending Next Opening Buy Order"
-
-                if order_processing_params is None:
-                    # Handle the case where close_limit_sell_order_processing did not complete successfully
-                    error_logger.error(f"Order processing parameters not found for closing cycle sell order for CycleSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}. Stopping the current cycle set. Check for any open orders related to this request on exchange and handle manually.")
-                    self.cycleset_running = False # Set cycle set attribute to not running
-                    self.cycle_running = False  # Set the cycle running status to False
-                    self.cycleset_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Failed"
-                    self.cycle_status = f"CyclSet {self.cycleset_number} ({self.cycle_type}) Cycle {buy_sell_cycle_instance.cycle_number}: Failed-Closing Sell Order"
-                    print("Order processing failed. Cycle not completed. Cycle set stopped. Check for any open orders related to this request on exchange and handle manually.")
-                    return
-                
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
-            
-                # Gather data for logic to determine price for next opening cycle buy order for repeating cycle
-
-            with self.buy_sell_cycleset_lock:
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Before important step")
-                # Print statement to indicate current RSI calculation
-                print("Calculating current RSI...")
-
-                # Calculate current RSI
-                rsi = calculate_rsi(product_id, chart_interval, length=20160)  # 15 days worth of 1-minute data
-                current_rsi = rsi
-                app_logger.info("Current RSI: %s", current_rsi)
-
-                
-                # Determine next opening cycle buy price
-                print("Determining next opening cycle buy order price...")
-                open_price_buy = determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi,product_stats["quote_increment"], max_iterations=10)
-                app_logger.info("Opening cycle buy order price determined: %s", open_price_buy)
-
-                if open_price_buy is not None:
-                    # Calculate compounding amount and size for next opening cycle buy order
-                    print("Calculating compounding amount and next opening cycle buy order size...")
-                    compounding_amount_Q_olb, no_compounding_Q_limit_olb = calculate_open_limit_buy_compounding_amt_Q(total_received_Q_cls, total_spent_B_cls, open_price_buy, maker_fee, product_stats["quote_increment"])
-                    open_size_Q = determine_next_open_size_Q_limit(compounding_option, total_received_Q_cls, no_compounding_Q_limit_olb, compounding_amount_Q_olb, compound_percent)
-                
-                if open_price_buy is None:
-                    error_logger.error(f"Failed to determine opening cycle price for next buy order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-            
-                if open_size_Q is not None:
-                    # Append the quote currency size value to the history list of the current instance
-                    self.open_size_Q_history.append(open_size_Q)
-
-                if open_size_Q is None:
-                    error_logger.error(f"Opening cycle size could not be determined for opening buy order for CycleSet {self.cycleset_number}. Stopping the current cycle set.")
-                    return
-                
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - After important step")
-
-            with thread_lock:
-                print("'buy_sell' thread acquired lock")
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Acquired lock")        
-                # Create a new Cycle instance
-                buy_sell_cycle_instance, self.cycle_number = self.add_cycle(open_size_Q, "buy_sell")
-
-                buy_sell_cycle_instance.cycle_number = self.cycle_number
-
-                # Add the cycle instance to the list in the CycleSet and Cycle
-                self.cycle_instances.append(buy_sell_cycle_instance)
-                buy_sell_cycle_instance.cycle_instances.append(buy_sell_cycle_instance)
-               
-                print("Buy_sell cycle completed.")
-                app_logger.info("Opening buy order ID: %s, Closing sell order ID: %s", open_order_id_buy, close_order_id_sell)
-                
-                # Call methods on the Cycle instance
-                app_logger.info(f"Starting next buy_sell cycle, Cycle {buy_sell_cycle_instance.cycle_number} of CycleSet {self.cycleset_number}")
-                self.place_next_buy_sell_cycle_orders(open_size_Q, open_price_buy, buy_sell_cycle_instance)
-                
-                print(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - Released lock")
-                print("'buy_sell' thread releasing lock")
-
-                return open_order_id_buy, close_order_id_sell
-        
-        except requests.exceptions.RequestException as e:
-            # Handle request exceptions
-            error_logger.error(f"An error occurred in place_next_buy_sell_cycle_orders: {e}")
-            error_logger.error(f"Status code: {e.response.status_code}" if hasattr(e, 'response') and e.response is not None else "")
-            return 
-        except json.JSONDecodeError as e:
-            # Handle JSON decoding errors
-            error_logger.error(f"Error decoding JSON response in place_next_buy_sell_cycle_orders: {e}")
-            return 
-        except Exception as e:
-            # Handle other unexpected errors
-            error_logger.error(f"Thread ID: {threading.get_ident()} - Timestamp: {time.time()} - An unexpected error occurred in place_next_buy_sell_cycle_orders: {e}")
-            return
 
 class Cycle:
     # Class attribute to store the count of instances

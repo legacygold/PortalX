@@ -88,7 +88,7 @@ def calculate_long_term_ma24(product_id):
 
     if len(closing_prices24) < 24:
         error_logger.error("Not enough data to return 24 hour closing prices")
-        return None  # Not enough data yet
+        time.sleep(300)  # Wait for 5 minutes before retrying
 
     # Calculate the 24-hour moving average
     long_term_ma24 = sum(closing_prices24) / 24
@@ -103,39 +103,44 @@ long_term_ma24 = calculate_long_term_ma24(product_id)
 app_logger.info("Long term 24 hour moving average: %s", long_term_ma24)
 
 def calculate_rsi(product_id, chart_interval, length):
-    # Print statement to indicate RSI calculation
-    print("Fetching RSI data...")
+    while True:
+        # Print statement to indicate RSI calculation
+        print("Fetching RSI data...")
 
-    # Define your desired time frame
-    total_data_points = 24000  # Slightly increased to ensure enough data
-    candles_per_request = 300  # Maximum candles per request
+        # Define your desired time frame
+        total_data_points = 24000  # Slightly increased to ensure enough data
+        candles_per_request = 300  # Maximum candles per request
 
-    # Calculate how many requests are needed
-    num_requests = total_data_points // candles_per_request
+        # Calculate how many requests are needed
+        num_requests = total_data_points // candles_per_request
 
-    # Initialize an empty list to collect closing prices
-    closing_prices = []
+        # Initialize an empty list to collect closing prices
+        closing_prices = []
 
-    # Initialize the end_time to the current time
-    end_time = int(time.time())
+        # Initialize the end_time to the current time
+        end_time = int(time.time())
 
-    # Make API requests and collect closing prices
-    for _ in range(num_requests):
-        # Calculate start_time based on end_time and the desired time frame
-        start_time = end_time - (chart_interval * candles_per_request)
+        # Make API requests and collect closing prices
+        for _ in range(num_requests):
+            # Calculate start_time based on end_time and the desired time frame
+            start_time = end_time - (chart_interval * candles_per_request)
 
-        # Make an API request and get historical data
-        data = fetch_historical_data(product_id, chart_interval, candles_per_request)
+            # Make an API request and get historical data
+            data = fetch_historical_data(product_id, chart_interval, candles_per_request)
 
-        # Extract closing prices and append to the list
-        closing_prices.extend([entry[4] for entry in data])
+            # Extract closing prices and append to the list
+            closing_prices.extend([entry[4] for entry in data])
 
-        # Update end_time for the next request
-        end_time = start_time
+            # Update end_time for the next request
+            end_time = start_time
 
-    # Ensure we have enough data points for the calculation
-    if len(closing_prices) < length:
-        raise ValueError("Insufficient data points for RSI calculation")
+        # Ensure we have enough data points for the calculation
+        if len(closing_prices) >= length:
+            break  # Exit the loop if we have enough data
+
+        # If we don't have enough data, wait for some time before retrying
+        print("Insufficient data points for RSI calculation. Retrying in 5 minutes...")
+        time.sleep(300)  # Wait for 5 minutes before retrying
 
     # Fill missing or zero values in closing prices with a default value (e.g., 0.0)
     closing_prices = pd.Series(closing_prices).fillna(0.0).tolist()
@@ -165,16 +170,67 @@ def calculate_rsi(product_id, chart_interval, length):
 
     return rsi
 
+def new_calculate_rsi(closing_prices, period=14):
+    """
+    Calculate the Relative Strength Index (RSI) for a given list of closing prices.
+    
+    Parameters:
+    - closing_prices: List of closing prices for a given product.
+    - period: Number of periods to use for RSI calculation, default is 14.
+    
+    Returns:
+    - RSI value.
+    """
+    if len(closing_prices) < period:
+        print("Insufficient data points for RSI calculation.")
+        return None
+
+    # Convert the closing prices to a Pandas Series
+    prices = pd.Series(closing_prices)
+
+    # Calculate price changes
+    delta = prices.diff()
+
+    # Separate gains and losses
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
+
+    # Calculate the average gain and average loss
+    avg_gain = gain.rolling(window=period, min_periods=1).mean()
+    avg_loss = loss.rolling(window=period, min_periods=1).mean()
+
+    # Calculate the Relative Strength (RS)
+    rs = avg_gain / avg_loss
+
+    # Calculate the Relative Strength Index (RSI)
+    rsi = 100 - (100 / (1 + rs))
+
+    return rsi.iloc[-1]  # Return the last RSI value
+
+# Example usage:
+rsi_value = new_calculate_rsi(closing_prices)
+print("Current RSI Value:", rsi_value)
+
 # Define current RSI
-rsi = calculate_rsi(product_id, chart_interval, length=20160)  # 15 days worth of 1-minute data
+rsi = calculate_rsi(product_id, chart_interval, length=21600)  # 15 days worth of 1-minute data
 current_rsi = rsi
 
-def determine_next_open_sell_order_price( profit_percent, current_rsi, quote_increment):
+def determine_next_open_sell_order_price(profit_percent, current_rsi, quote_increment, max_iterations=10, timeout=600):
+    quote_increment = float(product_stats["quote_increment"])
+    start_time = time.time()
+
+    # Print statement to indicate opening price determination
+    print("Determining next opening cycle sell order price...")
 
     # Initialize next opening cycle sell order prices
     open_price_sell = None
 
-    while True:
+    iterations = 0
+    while iterations < max_iterations:
+        # Check if the timeout has been exceeded
+        if time.time() - start_time > timeout:
+            raise Timeout("Timeout occurred while waiting for market conditions to be met")
+        
         headers = create_signed_request(api_key, api_secret, method, endpoint, body= '')
         # Recalculate current_price and mean24 inside the loop
         current_price = get_current_price(product_id, api_key, headers)  # Replace with your function to get the current price
@@ -187,21 +243,21 @@ def determine_next_open_sell_order_price( profit_percent, current_rsi, quote_inc
         if upward_trend:
             while current_rsi <= 50:
                 # Keep checking RSI until it's greater than 50
-                current_rsi = calculate_rsi(product_id, chart_interval, length=20160)  # Update RSI value
-                time.sleep(5)  # Wait for a while before checking again
+                current_rsi = calculate_rsi(product_id, chart_interval, length=21600)  # Update RSI value
+                time.sleep(90)  # Wait for a while before checking again
 
             # Trend is upward, RSI > 50
             upper_bb, lower_bb = calculate_bollinger_bands(closing_prices, user_config["window_size"], num_std_dev=2)
-            open_price_sell = round(max(current_price * (1 + profit_percent), 1.001 * upper_bb), -int(math.floor(math.log10(float(quote_increment)))))
+            open_price_sell = float(round(max(current_price * (1 + profit_percent), 1.001 * upper_bb), -int(math.floor(math.log10(float(quote_increment))))))
         else:
             while current_rsi <= 50:
                 # Keep checking RSI until it's greater than or equal to 50
-                current_rsi = calculate_rsi(product_id, chart_interval, length=20160)  # Update RSI value
-                time.sleep(5)  # Wait for a while before checking again
+                current_rsi = calculate_rsi(product_id, chart_interval, length=21600)  # Update RSI value
+                time.sleep(90)  # Wait for a while before checking again
 
             # Trend is downward, RSI > 50
             upper_bb, lower_bb = calculate_bollinger_bands(closing_prices, user_config["window_size"], num_std_dev=2)
-            open_price_sell = round(min(current_price * (1 + profit_percent), 0.999 * upper_bb), -int(math.floor(math.log10(float(quote_increment)))))
+            open_price_sell = float(round(min(current_price * (1 + profit_percent), 0.999 * upper_bb), -int(math.floor(math.log10(float(quote_increment))))))
 
         if open_price_sell is not None:
             # Retrieve best bid and ask prices
@@ -214,24 +270,25 @@ def determine_next_open_sell_order_price( profit_percent, current_rsi, quote_inc
             else:
                 print("Opening cycle price not favorable based on best bid. Continuing to wait...")
 
-        time.sleep(5)  # Adjust the sleep time as needed
+        time.sleep(90)  # Adjust the sleep time as needed
 
-def determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, quote_increment, max_iterations=10):
-    iterations = 0
+def determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, quote_increment, iterations=0, depth=0, max_iterations=10, max_depth=1000000):
 
     while iterations < max_iterations:
         try:
-            return determine_next_open_sell_order_price( profit_percent, current_rsi, quote_increment)
+            return determine_next_open_sell_order_price(profit_percent, current_rsi, quote_increment, max_iterations=10, timeout=600)
         except Timeout:
             print("Timeout occurred. Retrying...")
 
         iterations += 1
-        time.sleep(5)  # Adjust the sleep time as needed
+        time.sleep(90)  # Adjust the sleep time as needed
 
     print("Maximum iterations reached. Conditions for determining opening sell price not met.")
-    return None
+    return determine_next_open_sell_order_price_with_retry(profit_percent, current_rsi, quote_increment, iterations, depth + 1, max_iterations, max_depth)
     
-def determine_next_open_buy_order_price(profit_percent, current_rsi, quote_increment):
+def determine_next_open_buy_order_price(profit_percent, current_rsi, quote_increment, max_iterations=10, timeout=600):
+    quote_increment = float(product_stats["quote_increment"])
+    start_time = time.time()
 
     # Print statement to indicate opening price determination
     print("Determining next opening cycle buy order price...")
@@ -239,7 +296,12 @@ def determine_next_open_buy_order_price(profit_percent, current_rsi, quote_incre
     # Initialize next opening cycle buy order price
     open_price_buy = None
 
-    while True:
+    iterations = 0
+    while iterations < max_iterations:
+        # Check if the timeout has been exceeded
+        if time.time() - start_time > timeout:
+            raise Timeout("Timeout occurred while waiting for market conditions to be met. Resetting retries...")
+        
         headers = create_signed_request(api_key, api_secret, method, endpoint, body='')
         # Recalculate current_price and mean24 inside the loop
         current_price = get_current_price(product_id, api_key, headers)  # Replace with your function to get the current price
@@ -252,22 +314,22 @@ def determine_next_open_buy_order_price(profit_percent, current_rsi, quote_incre
         if upward_trend:
             while current_rsi >= 50:
                 # Keep checking RSI until it's less than 50
-                current_rsi = calculate_rsi(product_id, chart_interval, length=20160)  # Update RSI value
-                time.sleep(5)  # Wait for a while before checking again
+                current_rsi = calculate_rsi(product_id, chart_interval, length=21600)  # Update RSI value
+                time.sleep(90)  # Wait for a while before checking again
 
             # Trend is upward, RSI < 50
             upper_bb, lower_bb = calculate_bollinger_bands(closing_prices, user_config["window_size"], num_std_dev=2)
-            open_price_buy = round(max(current_price * (1 - profit_percent), 1.001 * lower_bb), -int(math.floor(math.log10(float(quote_increment)))))
+            open_price_buy = float(round(max(current_price * (1 - profit_percent), 1.001 * lower_bb), -int(math.floor(math.log10(float(quote_increment))))))
 
         else:
             while current_rsi >= 50:
                 # Keep checking RSI until it's less than 50
-                current_rsi = calculate_rsi(product_id, chart_interval, length=20160)  # Update RSI value
-                time.sleep(5)  # Wait for a while before checking again
+                current_rsi = calculate_rsi(product_id, chart_interval, length=21600)  # Update RSI value
+                time.sleep(90)  # Wait for a while before checking again
 
             # Trend is downward, RSI < 50
             upper_bb, lower_bb = calculate_bollinger_bands(closing_prices, user_config["window_size"], num_std_dev=2)
-            open_price_buy = round(min(current_price * (1 - profit_percent), 0.999 * lower_bb), -int(math.floor(math.log10(float(quote_increment)))))
+            open_price_buy = float(round(min(current_price * (1 - profit_percent), 0.999 * lower_bb), -int(math.floor(math.log10(float(quote_increment))))))
 
         if open_price_buy is not None:
             # Retrieve best bid and ask prices
@@ -280,22 +342,21 @@ def determine_next_open_buy_order_price(profit_percent, current_rsi, quote_incre
             else:
                 print("Opening cycle price not favorable based on best ask. Continuing to wait...")
 
-        time.sleep(5)  # Adjust the sleep time as needed
+        time.sleep(90)  # Adjust the sleep time as needed
 
-def determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi, quote_increment, max_iterations=10):
-    iterations = 0
+def determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi, quote_increment, iterations=0, depth=0, max_iterations=10, max_depth=1000000):
 
     while iterations < max_iterations:
         try:
-            return determine_next_open_buy_order_price( profit_percent, current_rsi, quote_increment)
+            return determine_next_open_buy_order_price(profit_percent, current_rsi, quote_increment, max_iterations=10, timeout=600)
         except Timeout:
             print("Timeout occurred. Retrying...")
 
         iterations += 1
-        time.sleep(5)  # Adjust the sleep time as needed
+        time.sleep(90)  # Adjust the sleep time as needed
 
-    print("Maximum iterations reached. Conditions for determining opening buy price not met.")
-    return None
+    print("Maximum iterations reached. Conditions for determining opening buy price not met. Resetting retries...")
+    return determine_next_open_buy_order_price_with_retry(profit_percent, current_rsi, quote_increment, iterations, depth + 1, max_iterations, max_depth)
 
 def place_next_opening_cycle_sell_order(api_key, api_secret, product_id, open_size_B, open_price_sell):
     

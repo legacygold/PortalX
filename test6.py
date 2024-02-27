@@ -1,10 +1,11 @@
 # test6.py
 from starting_input import user_config
 from cycle_set_utils import CycleSet, Cycle
+from logging_config import app_logger
 
 # Define argument parameters
 open_size_B = 100.0
-open_price_sell = 0.112
+open_price_sell = 0.115550
 
 # Create a CycleSet instance (assuming your CycleSet class has an __init__ method)
 starting_size = user_config["starting_size_B"]
@@ -29,10 +30,11 @@ cycle_set_instance = CycleSet(
 
 # Create a Cycle instance (assuming your Cycle class has an __init__ method)
 sell_buy_cycle_instance, cycle_set_instance.cycle_number = cycle_set_instance.add_cycle(open_size_B, "sell_buy")
+app_logger.info("sell_buy_cycle_instance: %s", sell_buy_cycle_instance )
+app_logger.info("Cycle set instance: %s", cycle_set_instance)
 
 sell_buy_cycle_instance.cycle_number = cycle_set_instance.cycle_number
 print(f"Starting next sell_buy cycle, Cycle {sell_buy_cycle_instance.cycle_number} of CycleSet {cycle_set_instance.cycleset_number} {cycle_set_instance.cycle_type}")
-
 
 # Call the method on the instance
 cycle_set_instance.place_next_sell_buy_cycle_orders(open_size_B, open_price_sell, sell_buy_cycle_instance)

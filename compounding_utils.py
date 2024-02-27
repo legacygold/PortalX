@@ -105,7 +105,7 @@ def determine_next_close_size_Q_limit(compounding_option, total_received_Q, no_c
     if compounding_option == "100":
         close_size_Q = total_received_Q
     elif compounding_option == "partial":
-        close_size_Q = no_compounding_Q_limit + (compounding_amt_Q * (compound_percent / 100))
+        close_size_Q = float(no_compounding_Q_limit + (compounding_amt_Q * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     
@@ -119,7 +119,7 @@ def determine_next_close_size_B_limit(compounding_option, total_received_B, no_c
     if compounding_option == "100":
         close_size_B = total_received_B
     elif compounding_option == "partial":
-        close_size_B = no_compounding_B_limit + (compounding_amt_B * (compound_percent / 100))
+        close_size_B = float(no_compounding_B_limit + (compounding_amt_B * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     
@@ -133,7 +133,7 @@ def determine_next_close_size_Q_market(compounding_option, total_received_Q, no_
     if compounding_option == "100":
         close_size_Q = total_received_Q
     elif compounding_option == "partial":
-        close_size_Q = no_compounding_Q_market + (compounding_amt_Q * (compound_percent / 100))
+        close_size_Q = float(no_compounding_Q_market + (compounding_amt_Q * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     
@@ -147,7 +147,7 @@ def determine_next_close_size_B_market(compounding_option, total_received_B, no_
     if compounding_option == "100":
         close_size_B = total_received_B
     elif compounding_option == "partial":
-        close_size_B = no_compounding_B_market + (compounding_amt_B * (compound_percent / 100))
+        close_size_B = float(no_compounding_B_market + (compounding_amt_B * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     
@@ -217,7 +217,7 @@ def determine_next_open_size_B_limit(compounding_option, total_received_B, no_co
     if compounding_option == "100":
         open_size_B = total_received_B
     elif compounding_option == "partial":
-        open_size_B = no_compounding_B_limit + (compounding_amt_B * (compound_percent / 100))
+        open_size_B = float(no_compounding_B_limit + (compounding_amt_B * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     return open_size_B
@@ -227,7 +227,7 @@ def determine_next_open_size_Q_limit(compounding_option, total_received_Q, no_co
     if compounding_option == "100":
         open_size_Q = total_received_Q
     elif compounding_option == "partial":
-        open_size_Q = no_compounding_Q_limit + (compounding_amt_Q * (compound_percent / 100))
+        open_size_Q = float(no_compounding_Q_limit + (compounding_amt_Q * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     return open_size_Q
@@ -237,7 +237,7 @@ def determine_next_open_size_B_market(compounding_option, total_received_B, no_c
     if compounding_option == "100":
         open_size_B = total_received_B
     elif compounding_option == "partial":
-        open_size_B = no_compounding_B_market + (compounding_amt_B * (compound_percent / 100))
+        open_size_B = float(no_compounding_B_market + (compounding_amt_B * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     return open_size_B
@@ -247,7 +247,7 @@ def determine_next_open_size_Q_market(compounding_option, total_received_Q, no_c
     if compounding_option == "100":
         open_size_Q = total_received_Q
     elif compounding_option == "partial":
-        open_size_Q = no_compounding_Q_market + (compounding_amt_Q * (compound_percent / 100))
+        open_size_Q = float(no_compounding_Q_market + (compounding_amt_Q * (compound_percent / 100)))
     else:
         raise ValueError("Invalid compounding option")
     return open_size_Q

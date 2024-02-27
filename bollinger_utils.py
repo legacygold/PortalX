@@ -183,14 +183,19 @@ def determine_starting_buy_parameters(current_price, lower_bb, starting_size_Q, 
         # Wait for a short duration before checking again
         time.sleep(5)  # Adjust the duration as needed
 
-def calculate_starting_sell_price(current_price, upper_bb, starting_size_B, mean24, product_stats, max_iterations=10):
+def calculate_starting_sell_price(current_price, upper_bb, starting_size_B, mean24, product_stats, max_iterations=10, timeout=600):
     quote_increment = float(product_stats["quote_increment"])
-    
+    start_time = time.time()
+
     # Initialize the starting sell price
     starting_price_sell = None
 
     iterations = 0
     while iterations < max_iterations:
+        # Check if the timeout has been exceeded
+        if time.time() - start_time > timeout:
+            raise Timeout("Timeout occurred while waiting for market conditions to be met")
+
         headers = create_signed_request(api_key, api_secret, method, endpoint, body= '')
         # Recalculate current_price and mean24 inside the loop
         current_price = get_current_price(product_id, api_key, headers)  # Replace with your function to get the current price
@@ -229,11 +234,12 @@ def calculate_starting_sell_price(current_price, upper_bb, starting_size_B, mean
     return determine_starting_prices(current_price, upper_bb, lower_bb, starting_size_B, starting_size_Q, mean24, quote_increment)
 
 def calculate_starting_sell_price_with_retry(current_price, upper_bb, starting_size_B, mean24, max_iterations=10):
+    quote_increment = float(product_stats["quote_increment"])
     iterations = 0
 
     while iterations < max_iterations:
         try:
-            return calculate_starting_sell_price(current_price, upper_bb, starting_size_B, mean24, product_stats, max_iterations=10)
+            return calculate_starting_sell_price(current_price, upper_bb, starting_size_B, mean24, product_stats, max_iterations=10, timeout=600)
         except Timeout:
             print("Timeout occurred. Retrying...")
 
@@ -241,16 +247,24 @@ def calculate_starting_sell_price_with_retry(current_price, upper_bb, starting_s
         time.sleep(90)  # Adjust the sleep time as needed
 
     print("Maximum iterations reached. Conditions for determining starting sell price not met. Resetting retries.")
-    return None
+    starting_size_Q = user_config["starting_size_Q"]
+    upper_bb, lower_bb = calculate_bollinger_bands(closing_prices, window_size, num_std_dev=2)
+    from cycle_set_utils import determine_starting_prices
+    return determine_starting_prices(current_price, upper_bb, lower_bb, starting_size_B, starting_size_Q, mean24, quote_increment)
 
-def calculate_starting_buy_price(current_price, lower_bb, starting_size_Q, mean24, product_stats, max_iterations=10):
+def calculate_starting_buy_price(current_price, lower_bb, starting_size_Q, mean24, product_stats, max_iterations=10, timeout=600):
     quote_increment = float(product_stats["quote_increment"])
+    start_time = time.time()
     
     # Initialize the starting buy price
     starting_price_buy = None
 
     iterations = 0
     while iterations < max_iterations:
+        # Check if the timeout has been exceeded
+        if time.time() - start_time > timeout:
+            raise Timeout("Timeout occurred while waiting for market conditions to be met")
+
         headers = create_signed_request(api_key, api_secret, method, endpoint, body= '')
         # Recalculate current_price and mean24 inside the loop
         current_price = get_current_price(product_id, api_key, headers)  # Replace with your function to get the current price
@@ -289,18 +303,24 @@ def calculate_starting_buy_price(current_price, lower_bb, starting_size_Q, mean2
     return determine_starting_prices(current_price, upper_bb, lower_bb, starting_size_B, starting_size_Q, mean24, quote_increment)
 
 def calculate_starting_buy_price_with_retry(current_price, lower_bb, starting_size_Q, mean24, max_iterations=10):
+    quote_increment = float(product_stats["quote_increment"])
     iterations = 0
 
     while iterations < max_iterations:
         try:
-            return calculate_starting_buy_price(current_price, lower_bb, starting_size_Q, mean24, product_stats, max_iterations=10)
+            return calculate_starting_buy_price(current_price, lower_bb, starting_size_Q, mean24, product_stats, max_iterations=10, timeout=600)
         except Timeout:
             print("Timeout occurred. Retrying...")
 
         iterations += 1
         time.sleep(5)  # Adjust the sleep time as needed
 
-    print("Maximum iterations reached. Conditions for determining starting sell price not met. Resetting retries.")
+    print("Maximum iterations reached. Conditions for determining starting buy price not met. Resetting retries.")
+    starting_size_B = user_config["starting_size_B"]
+    upper_bb, lower_bb = calculate_bollinger_bands(closing_prices, window_size, num_std_dev=2)
+    from cycle_set_utils import determine_starting_prices
+    return determine_starting_prices(current_price, upper_bb, lower_bb, starting_size_B, starting_size_Q, mean24, quote_increment)
+
 
 # Indicate that bollinger_utils.py module loaded successfully
 info_logger.info("bollinger_utils module loaded successfully")

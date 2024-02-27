@@ -54,3 +54,24 @@ app_logger.addHandler(console_handler)
 
 # Now, you can use app_logger.info() to log messages to 'app.log' and print them to the console.
 app_logger.info("This message will be logged in 'app.log' and printed to the console.")
+
+def setup_cycleset_logger(cycle_set_counter, cycle_type):
+    # Define a short label for the cycle type
+    cycle_type_label = "sell_buy" if cycle_type == "sell_buy" else "buy_sell"
+
+    # Create a logger
+    logger = logging.getLogger(f"cycleset_{cycle_set_counter}_{cycle_type_label}")
+    logger.setLevel(logging.INFO)
+
+    # Create a file handler
+    file_handler = logging.FileHandler(f"cycleset_{cycle_set_counter}_{cycle_type_label}_log.txt")
+    file_handler.setLevel(logging.INFO)
+
+    # Create a formatter and set it for the handler
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+
+    # Add the handler to the logger
+    logger.addHandler(file_handler)
+
+    return logger

@@ -3,7 +3,7 @@ import sys
 import threading
 import http.client
 import time
-from logging_config import app_logger, info_logger, error_logger
+from logging_config import app_logger, info_logger, error_logger, setup_cycleset_logger
 from user_input2 import collect_user_input, get_valid_choice
 from starting_input import user_config
 from config import config_data
@@ -211,7 +211,11 @@ def create_and_start_cycle_set_sell_buy(user_config):
                     "sell_buy",  # Cycle type
                 )
 
-                app_logger.info(f"Cycle Set {sell_buy_cycle_set_counter} (sell_buy) created.")
+                # Set up logger for the sell-buy cycle set
+                sell_buy_logger = setup_cycleset_logger(sell_buy_cycle_set_counter)
+
+                # Now you can use the sell_buy_logger to log messages
+                sell_buy_logger.info(f"Cycle Set {sell_buy_cycle_set_counter} (sell_buy) created and started")
 
                 new_cycle_set_sell_buy.cycle_instances.append(new_cycle_sell_buy)
 
@@ -262,7 +266,11 @@ def create_and_start_cycle_set_buy_sell(user_config):
                     "buy_sell" # Cycle type
                 )
 
-                app_logger.info(f"Cycle Set {buy_sell_cycle_set_counter} (buy_sell) created.")
+                # Set up logger for the sell-buy cycle set
+                buy_sell_logger = setup_cycleset_logger(buy_sell_cycle_set_counter)
+
+                # Now you can use the sell_buy_logger to log messages
+                buy_sell_logger.info(f"Cycle Set {buy_sell_cycle_set_counter} (buy_sell) created and started")
 
                 new_cycle_set_buy_sell.cycle_instances.append(new_cycle_buy_sell)
 
@@ -378,6 +386,7 @@ def handle_options_menu():
 
                     # Run user_input2.py to input user data (or create a function "collect_user_input()" to do this)
                     user_config = collect_user_input()
+                    info_logger.info("User input data for new cycle set(s): %s", user_config)
                     # Create a new instance of the CycleSet class and start first cycle
                     create_and_start_cycle_sets(user_config)
 
@@ -438,12 +447,16 @@ def handle_options_menu():
                     # Print the 'sell_buy' cycle sets data
                     print("Sell-Buy Cycle Sets:")
                     for data in sell_buy_cycle_sets_data:
-                        print(data)
+                        app_logger.info(data)
+                        status = cycle_set.get_status()
+                        app_logger.info(status)
 
                     # Print the 'buy_sell' cycle sets data
                     print("Buy-Sell Cycle Sets:")
                     for data in buy_sell_cycle_sets_data:
-                        print(data)
+                        app_logger.info(data)
+                        status = cycle_set.get_status()
+                        app_logger.info(status)
                                     
                 elif choice == 3:
                     # User wants to stop a CycleSet instance

@@ -1,34 +1,471 @@
-2024-01-26 03:14:40,654 - app - INFO - This message will be logged in 'app.log' and printed to the console.
-2024-01-26 03:15:40,709 - app - INFO - Fetching historical data for XLM-USD
-2024-01-26 03:15:41,521 - app - INFO - Fetching product stats for XLM-USD
-2024-01-26 03:15:43,238 - app - INFO - Long term 24 hour moving average: 0.11220429166666666
-2024-01-26 03:16:52,543 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 51.207463309177776
-2024-01-26 03:16:54,270 - app - INFO - Current Price: 0.113258
-2024-01-26 03:16:55,108 - app - INFO - Upper Bollinger Band: 0.11329598316685069
-2024-01-26 03:16:55,111 - app - INFO - Lower Bollinger Band: 0.11283636977432579
-2024-01-26 03:16:55,113 - app - INFO - Long Term 24 hr Moving Average: 0.11220429166666666
-2024-01-26 03:16:55,147 - app - INFO - Current RSI: 51.207463309177776
-2024-01-26 03:16:55,757 - app - INFO - This message will be logged in 'app.log' and printed to the console.
-2024-01-26 03:16:55,758 - app - INFO - Creating and starting cycle set(s)...
-2024-01-26 03:16:55,759 - app - INFO - Creating CycleSet with cycle_type: sell_buy
-2024-01-26 03:16:55,760 - app - INFO - CycleSet 1 (sell_buy) counted
-2024-01-26 03:16:55,760 - app - INFO - Cycle 1 (sell_buy) counted
-2024-01-26 03:16:55,760 - app - INFO - Cycle Set 1 (sell_buy) created.
-2024-01-26 03:16:55,761 - app - INFO - Cycle Set 1 (sell_buy) starting cycle initiated...
-2024-01-26 03:16:55,762 - app - INFO - Determining starting price for sell order...
-2024-01-26 03:16:56,565 - app - INFO - Current XLM-USD price: 0.11325
-2024-01-26 03:16:58,178 - app - INFO - Starting price calculated for sell order: 0.113239
-2024-01-26 03:16:59,117 - app - INFO - Starting opening cycle sell order placed successfully: d60cd6e2-6506-4589-82f8-fedacec1aa39
-2024-01-26 03:16:59,937 - app - INFO - Initial order details: {'order_id': 'd60cd6e2-6506-4589-82f8-fedacec1aa39', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.113239', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'b253e735-57cf-46e8-9cc0-62b275fd61cf', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-01-26T08:16:59.620485Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '100', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
-2024-01-26 03:19:03,826 - app - INFO - Current order status: FILLED
-2024-01-26 03:19:03,828 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': 'd60cd6e2-6506-4589-82f8-fedacec1aa39', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.113239', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'b253e735-57cf-46e8-9cc0-62b275fd61cf', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-01-26T08:16:59.620485Z', 'completion_percentage': '100.00', 'filled_size': '100', 'average_filled_price': '0.113239', 'fee': '', 'number_of_fills': '1', 'filled_value': '11.3239', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.03963365', 'size_inclusive_of_fees': False, 'total_value_after_fees': '11.28426635', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-01-26T08:17:13.496Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
-2024-01-26 03:19:03,860 - app - INFO - Processed order parameters: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.284266, 'residual_amt_B_ols': 0.0}
-2024-01-26 03:19:03,864 - app - INFO - Value of order_processing_params: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.284266, 'residual_amt_B_ols': 0.0}
-2024-01-26 03:19:03,869 - app - INFO - Closing cycle buy price calculated: 0.112333
-2024-01-26 03:19:03,872 - app - INFO - Amount of quote currency compounded for close cycle limit buy order: 0.09028300000000122
-2024-01-26 03:19:03,873 - app - INFO - Amount of quote currency to be used if no compounding for close cycle limit buy order: 11.193983
-2024-01-26 03:19:03,875 - app - INFO - Next close cycle limit order quote currency size: 11.284266
-2024-01-26 03:19:03,912 - app - INFO - Base size calculated successfully: 100.0
-2024-01-26 03:19:04,994 - app - INFO - Next closing cycle buy order placed. Order ID: 8d2859bb-a664-4476-8699-53e5107fbe6e
-2024-01-26 03:19:04,996 - app - INFO - Starting closing cycle buy order placed successfully: 8d2859bb-a664-4476-8699-53e5107fbe6e
-2024-01-26 03:19:05,852 - app - INFO - Initial order details: {'order_id': '8d2859bb-a664-4476-8699-53e5107fbe6e', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.112333', 'post_only': True}}, 'side': 'BUY', 'client_order_id': '91515c1f-7dba-4f1d-8867-e43bf3db098c', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-01-26T08:19:05.496849Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '11.27261655', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-22 03:24:48,844 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-22 03:25:45,313 - app - INFO - Fetching historical data for XLM-USD
+2024-02-22 03:25:45,925 - app - INFO - Fetching product stats for XLM-USD
+2024-02-22 03:25:47,395 - app - INFO - Long term 24 hour moving average: 0.11366804166666666
+2024-02-22 03:26:39,100 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 56.35375651944565
+2024-02-22 03:26:40,626 - app - INFO - Current Price: 0.116865
+2024-02-22 03:26:41,340 - app - INFO - Upper Bollinger Band: 0.11714918176021617
+2024-02-22 03:26:41,342 - app - INFO - Lower Bollinger Band: 0.11646001823978382
+2024-02-22 03:26:41,344 - app - INFO - Long Term 24 hr Moving Average: 0.11366804166666666
+2024-02-22 03:26:41,348 - app - INFO - Current RSI: 56.35375651944565
+2024-02-22 03:26:41,792 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-22 03:26:41,793 - app - INFO - Creating and starting cycle set(s)...
+2024-02-22 03:26:41,799 - app - INFO - Creating CycleSet with cycle_type: sell_buy
+2024-02-22 03:26:41,800 - app - INFO - CycleSet 1 (sell_buy) counted
+2024-02-22 03:26:41,802 - app - INFO - Cycle 1 (sell_buy) counted
+2024-02-22 03:26:41,803 - app - INFO - Cycle Set 1 (sell_buy) created.
+2024-02-22 03:26:41,804 - app - INFO - Creating CycleSet with cycle_type: buy_sell
+2024-02-22 03:26:41,805 - app - INFO - CycleSet 1 (buy_sell) counted
+2024-02-22 03:26:41,806 - app - INFO - Cycle 1 (buy_sell) counted
+2024-02-22 03:26:41,806 - app - INFO - Cycle Set 1 (buy_sell) created.
+2024-02-22 03:26:41,807 - app - INFO - Cycle Set 1 (sell_buy) starting cycle initiated...
+2024-02-22 03:26:41,808 - app - INFO - CyclSet 1 sell_buy Cycle 1: Pending-Starting Opening Sell Order
+2024-02-22 03:26:41,808 - app - INFO - Cycle Set 1 (buy_sell) starting cycle initiated...
+2024-02-22 03:26:41,809 - app - INFO - CyclSet 1 buy_sell Cycle 1: Pending-Starting Opening Buy Order
+2024-02-22 03:26:41,810 - app - INFO - Determining starting price for sell order...
+2024-02-22 03:26:42,560 - app - INFO - Current XLM-USD price: 0.116846
+2024-02-22 03:26:43,832 - app - INFO - Starting price calculated for sell order: 0.117091
+2024-02-22 03:26:44,677 - app - INFO - Starting opening cycle sell order placed successfully: 5ce55568-ef2b-48f1-b1ef-4ad3e8e97ca3
+2024-02-22 03:26:44,688 - app - INFO - Determining starting price for buy order...
+2024-02-22 03:26:45,487 - app - INFO - Initial order details: {'order_id': '5ce55568-ef2b-48f1-b1ef-4ad3e8e97ca3', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.117091', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'e6f83f49-8324-4933-8516-73fb15d472aa', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T08:26:45.524584Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '100', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-22 03:26:45,499 - app - INFO - Current XLM-USD price: 0.116846
+2024-02-22 03:26:46,922 - app - INFO - Starting price calculated for sell order: 0.117091
+2024-02-22 03:26:47,788 - app - INFO - Starting opening cycle buy order placed successfully: c8a9f181-f328-44d7-b688-89e3631f7e4c
+2024-02-22 03:26:48,502 - app - INFO - Initial order details: {'order_id': 'c8a9f181-f328-44d7-b688-89e3631f7e4c', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '85', 'limit_price': '0.116506', 'post_only': True}}, 'side': 'BUY', 'client_order_id': 'b65c1e9f-3029-49ba-b9d5-dd819cb15262', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T08:26:48.645075Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '9.937670535', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-22 04:23:36,800 - app - INFO - Current order status: FILLED
+2024-02-22 04:23:36,803 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': '5ce55568-ef2b-48f1-b1ef-4ad3e8e97ca3', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.117091', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'e6f83f49-8324-4933-8516-73fb15d472aa', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T08:26:45.524584Z', 'completion_percentage': '100.00', 'filled_size': '100', 'average_filled_price': '0.117091', 'fee': '', 'number_of_fills': '1', 'filled_value': '11.7091', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.04098185', 'size_inclusive_of_fees': False, 'total_value_after_fees': '11.66811815', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-22T08:39:07.335941Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-22 04:23:36,862 - app - INFO - Processed order parameters: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.668118, 'residual_amt_B_ols': 0.0}
+2024-02-22 04:23:36,864 - app - INFO - Value of order_processing_params: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.668118, 'residual_amt_B_ols': 0.0}
+2024-02-22 04:23:36,866 - app - INFO - Closing cycle buy price calculated: 0.116154
+2024-02-22 04:23:36,868 - app - INFO - Amount of quote currency compounded for close cycle limit buy order: 0.09337200000000045
+2024-02-22 04:23:36,869 - app - INFO - Amount of quote currency to be used if no compounding for close cycle limit buy order: 11.574746
+2024-02-22 04:23:36,870 - app - INFO - Next close cycle limit order quote currency size: 11.668118
+2024-02-22 04:23:36,874 - app - INFO - Base size calculated successfully: 100.0
+2024-02-22 04:23:37,832 - app - INFO - Next closing cycle buy order placed. Order ID: ef348c71-ad79-48e9-92e9-fe4103093a19
+2024-02-22 04:23:37,837 - app - INFO - Starting closing cycle buy order placed successfully: ef348c71-ad79-48e9-92e9-fe4103093a19
+2024-02-22 04:23:38,769 - app - INFO - Initial order details: {'order_id': 'ef348c71-ad79-48e9-92e9-fe4103093a19', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.116154', 'post_only': True}}, 'side': 'BUY', 'client_order_id': 'e4b6d88d-4483-4dd1-b166-0901cb765d01', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T09:23:38.698426Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '11.6560539', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-22 05:36:38,037 - app - INFO - Current order status: FILLED
+2024-02-22 05:36:38,103 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': 'c8a9f181-f328-44d7-b688-89e3631f7e4c', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '85', 'limit_price': '0.116506', 'post_only': True}}, 'side': 'BUY', 'client_order_id': 'b65c1e9f-3029-49ba-b9d5-dd819cb15262', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T08:26:48.645075Z', 'completion_percentage': '100.00', 'filled_size': '85', 'average_filled_price': '0.116506', 'fee': '', 'number_of_fills': '1', 'filled_value': '9.90301', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.034660535', 'size_inclusive_of_fees': False, 'total_value_after_fees': '9.937670535', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-22T10:36:29.375149Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-22 05:36:38,249 - app - INFO - Processed order parameters: {'total_spent_Q_olb': 9.937671, 'total_received_B_olb': 85.0, 'residual_amt_Q_olb': 0.062329}
+2024-02-22 05:36:38,250 - app - INFO - Value of order_processing_params: {'total_spent_Q_olb': 9.937671, 'total_received_B_olb': 85.0, 'residual_amt_Q_olb': 0.062329}
+2024-02-22 05:36:38,252 - app - INFO - Closing cycle sell price calculated: 0.117438
+2024-02-22 05:36:38,254 - app - INFO - Amount of base currency compounded for close cycle limit sell order: 1.0
+2024-02-22 05:36:38,255 - app - INFO - Amount of base currency to be used if no compounding for close cycle limit sell order: 84.0
+2024-02-22 05:36:38,256 - app - INFO - Next close cycle limit order base currency size: 85.0
+2024-02-22 05:36:39,483 - app - INFO - Next closing cycle sell order placed. Order ID: 15e74dee-6140-4cbb-bb79-729d46040f82
+2024-02-22 05:36:39,502 - app - INFO - Starting closing cycle sell order placed successfully: 15e74dee-6140-4cbb-bb79-729d46040f82
+2024-02-22 05:36:40,432 - app - INFO - Initial order details: {'order_id': '15e74dee-6140-4cbb-bb79-729d46040f82', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '85', 'limit_price': '0.117438', 'post_only': True}}, 'side': 'SELL', 'client_order_id': '8b605265-0c1a-433a-be77-be10810918b0', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T10:36:40.319418Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '85', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-22 05:47:18,478 - app - INFO - Current order status: FILLED
+2024-02-22 05:47:18,479 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': 'ef348c71-ad79-48e9-92e9-fe4103093a19', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.116154', 'post_only': True}}, 'side': 'BUY', 'client_order_id': 'e4b6d88d-4483-4dd1-b166-0901cb765d01', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T09:23:38.698426Z', 'completion_percentage': '100.00', 'filled_size': '100', 'average_filled_price': '0.116154', 'fee': '', 'number_of_fills': '1', 'filled_value': '11.6154', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.0406539', 'size_inclusive_of_fees': False, 'total_value_after_fees': '11.6560539', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-22T10:47:10.165Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-22 05:47:18,501 - app - INFO - Processed order parameters: {'total_spent_Q_clb': 11.656054, 'total_received_B_clb': 100.0, 'residual_amt_Q_clb': 0.012064}
+2024-02-22 05:48:27,577 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 55.04823420774453
+2024-02-22 05:48:27,579 - app - INFO - Current RSI: 55.04823420774453
+2024-02-22 05:48:28,453 - app - INFO - Current XLM-USD price: 0.11621
+2024-02-22 05:48:30,113 - app - INFO - Next opening cycle sell price: 0.117266
+2024-02-22 05:48:30,116 - app - INFO - Opening cycle sell order price determined: 0.117266
+2024-02-22 05:48:30,120 - app - INFO - Amount of base currency compounded for open cycle limit sell order: 1.0
+2024-02-22 05:48:30,125 - app - INFO - Amount of base currency to be used if no compounding for open cycle limit sell order: 99.0
+2024-02-22 05:48:30,129 - app - INFO - open_size_B: 100.0
+2024-02-22 05:48:30,163 - app - INFO - sell_buy_cycle_instance: <cycle_set_utils.Cycle object at 0x0000026D40B6AA50>
+2024-02-22 05:48:30,211 - app - INFO - Opening sell order ID: 5ce55568-ef2b-48f1-b1ef-4ad3e8e97ca3, Closing buy order ID: ef348c71-ad79-48e9-92e9-fe4103093a19
+2024-02-22 05:48:30,213 - app - INFO - Starting next sell_buy cycle, Cycle 2 of CycleSet 1 sell_buy
+2024-02-22 05:48:30,216 - app - INFO - Self: <cycle_set_utils.CycleSet object at 0x0000026D3B7CB710>
+2024-02-22 05:48:31,109 - app - INFO - Next opening cycle sell order placed. Order ID: 3a9fbff1-c49a-467f-b3ca-394d7b97f4c0
+2024-02-22 05:48:31,114 - app - INFO - Opening cycle sell order placed successfully: 3a9fbff1-c49a-467f-b3ca-394d7b97f4c0
+2024-02-22 05:48:31,116 - app - INFO - CyclSet 1 (sell_buy) Cycle 2: Active-Opening Cycle Sell Order
+2024-02-22 05:48:31,997 - app - INFO - Initial order details: {'order_id': '3a9fbff1-c49a-467f-b3ca-394d7b97f4c0', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.117266', 'post_only': True}}, 'side': 'SELL', 'client_order_id': '745e46fe-89ff-44ce-8fbb-0d8141e729d5', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T10:48:31.999057Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '100', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-24 12:01:12,294 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 12:02:03,505 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 12:02:04,619 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 12:03:34,518 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 12:04:16,169 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 12:04:18,114 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 12:29:12,113 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 12:29:53,563 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 12:29:54,457 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 12:44:42,798 - app - INFO - Current order status: FILLED
+2024-02-24 12:44:42,823 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': '3a9fbff1-c49a-467f-b3ca-394d7b97f4c0', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.117266', 'post_only': True}}, 'side': 'SELL', 'client_order_id': '745e46fe-89ff-44ce-8fbb-0d8141e729d5', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T10:48:31.999057Z', 'completion_percentage': '100.00', 'filled_size': '100', 'average_filled_price': '0.117266', 'fee': '', 'number_of_fills': '1', 'filled_value': '11.7266', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.0410431', 'size_inclusive_of_fees': False, 'total_value_after_fees': '11.6855569', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-24T17:44:40.702Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-24 12:44:42,929 - app - INFO - Processed order parameters: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.685557, 'residual_amt_B_ols': 0.0}
+2024-02-24 12:44:42,931 - app - INFO - Value of order_processing_params: {'total_spent_B_ols': 100.0, 'total_received_Q_ols': 11.685557, 'residual_amt_B_ols': 0.0}
+2024-02-24 12:44:42,933 - app - INFO - Closing cycle buy price calculated: 0.116328
+2024-02-24 12:44:42,937 - app - INFO - Amount of quote currency compounded for close cycle limit buy order: 0.09347199999999845
+2024-02-24 12:44:42,938 - app - INFO - Amount of quote currency to be used if no compounding for close cycle limit buy order: 11.592085
+2024-02-24 12:44:42,940 - app - INFO - Next close cycle limit order quote currency size: 11.685557
+2024-02-24 12:44:42,946 - app - INFO - Base size calculated successfully: 100.0
+2024-02-24 12:44:44,067 - app - INFO - Next closing cycle buy order placed. Order ID: ae8a7a25-d48d-450a-876f-515eee2eb0e5
+2024-02-24 12:44:44,071 - app - INFO - Closing cycle buy order placed successfully: ae8a7a25-d48d-450a-876f-515eee2eb0e5
+2024-02-24 12:44:44,871 - app - INFO - Initial order details: {'order_id': 'ae8a7a25-d48d-450a-876f-515eee2eb0e5', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.116328', 'post_only': True}}, 'side': 'BUY', 'client_order_id': '34865427-bf37-4b7c-95e4-599f08841833', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-24T17:44:42.954423Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '11.6735148', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-24 12:49:53,025 - app - INFO - Current order status: FILLED
+2024-02-24 12:49:53,026 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': '15e74dee-6140-4cbb-bb79-729d46040f82', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '85', 'limit_price': '0.117438', 'post_only': True}}, 'side': 'SELL', 'client_order_id': '8b605265-0c1a-433a-be77-be10810918b0', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-22T10:36:40.319418Z', 'completion_percentage': '100.00', 'filled_size': '85', 'average_filled_price': '0.117438', 'fee': '', 'number_of_fills': '2', 'filled_value': '9.98223', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.034937805', 'size_inclusive_of_fees': False, 'total_value_after_fees': '9.947292195', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-24T17:49:43.994817Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-24 12:49:53,100 - app - INFO - Processed order parameters: {'total_spent_B_cls': 85.0, 'total_received_Q_cls': 9.947292, 'residual_amt_B_cls': 0.0}
+2024-02-24 12:50:52,123 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 50.04565527078415
+2024-02-24 12:50:52,124 - app - INFO - Current RSI: 50.04565527078415
+2024-02-24 12:50:53,675 - app - INFO - Current XLM-USD price: 0.117376
+2024-02-24 12:52:00,544 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 49.80232099814464
+2024-02-24 12:53:31,478 - app - INFO - Next opening cycle buy price: 0.117259
+2024-02-24 12:53:31,480 - app - INFO - Opening cycle buy order price determined: 0.117259
+2024-02-24 12:53:31,484 - app - INFO - Amount of quote currency compounded for open cycle limit buy order: 0.015161999999998343
+2024-02-24 12:53:31,486 - app - INFO - Amount of quote currency to be used if no compounding for open cycle limit buy order: 9.93213
+2024-02-24 12:53:31,490 - app - INFO - open_size_Q: 9.947292
+2024-02-24 12:53:31,496 - app - INFO - buy_sell_cycle_instance: <cycle_set_utils.Cycle object at 0x0000026D3F8C3450>
+2024-02-24 12:53:31,497 - app - INFO - Opening buy order ID: c8a9f181-f328-44d7-b688-89e3631f7e4c, Closing sell order ID: 15e74dee-6140-4cbb-bb79-729d46040f82
+2024-02-24 12:53:31,499 - app - INFO - Starting next buy_sell cycle, Cycle 2 of CycleSet 1 buy_sell
+2024-02-24 12:53:31,506 - app - INFO - Base size calculated successfully: 84.0
+2024-02-24 12:53:32,272 - app - INFO - Next opening cycle buy order placed. Order ID: 742a6cdd-b4c1-419a-bfd3-3d7ad48786fa
+2024-02-24 12:53:32,275 - app - INFO - Opening cycle buy order placed successfully: 742a6cdd-b4c1-419a-bfd3-3d7ad48786fa
+2024-02-24 12:53:32,276 - app - INFO - CyclSet 1 (buy_sell) Cycle 2: Active-Opening Cycle Buy Order
+2024-02-24 12:53:33,003 - app - INFO - Initial order details: {'order_id': '742a6cdd-b4c1-419a-bfd3-3d7ad48786fa', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '84', 'limit_price': '0.117259', 'post_only': True}}, 'side': 'BUY', 'client_order_id': '8fce502e-6822-470b-be9d-62ffb7805746', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-24T17:53:31.179735Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '9.884230146', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-24 13:31:33,633 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 13:35:50,431 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 13:52:44,508 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 13:53:03,812 - app - INFO - Open: 0.116528
+2024-02-24 13:53:03,813 - app - INFO - Close: 0.116342
+2024-02-24 13:53:03,814 - app - INFO - 24hr High: 0.116533
+2024-02-24 13:53:03,815 - app - INFO - 24hr Low: 0.116342
+2024-02-24 13:53:03,817 - app - INFO - 24hr Volume: 250875.2642
+2024-02-24 13:53:03,818 - app - INFO - 24hr Change: -0.12447741
+2024-02-24 13:53:03,818 - app - INFO - Upper Bollinger Band: 0.11671556
+2024-02-24 13:53:03,819 - app - INFO - Lower Bollinger Band: 0.11635894
+2024-02-24 13:53:03,820 - app - INFO - Moving Averge: 0.11653725
+2024-02-24 13:53:03,821 - app - INFO - RSI: 31.98929297
+2024-02-24 13:53:03,822 - app - INFO - MACD: -6.602e-05
+2024-02-24 13:54:46,306 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 13:55:50,654 - app - INFO - Open: 0.116384
+2024-02-24 13:55:50,654 - app - INFO - Close: 0.116384
+2024-02-24 13:55:50,655 - app - INFO - 24hr High: 0.116384
+2024-02-24 13:55:50,655 - app - INFO - 24hr Low: 0.116384
+2024-02-24 13:55:50,655 - app - INFO - 24hr Volume: 216.9803
+2024-02-24 13:55:50,656 - app - INFO - 24hr Change: 0.01374948
+2024-02-24 13:55:50,656 - app - INFO - Upper Bollinger Band: 0.11672281
+2024-02-24 13:55:50,656 - app - INFO - Lower Bollinger Band: 0.11631509
+2024-02-24 13:55:50,657 - app - INFO - Moving Averge: 0.11651895
+2024-02-24 13:55:50,657 - app - INFO - RSI: 34.95327693
+2024-02-24 13:55:50,657 - app - INFO - MACD: -8.048e-05
+2024-02-24 13:55:50,658 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 13:55:51,589 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 13:58:02,520 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 13:58:52,485 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 13:58:53,300 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 14:00:08,176 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 14:00:55,916 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 14:00:59,766 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 14:56:03,053 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-24 14:56:50,116 - app - INFO - Fetching historical data for XLM-USD
+2024-02-24 14:56:50,924 - app - INFO - Fetching product stats for XLM-USD
+2024-02-24 14:58:05,842 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 21600: 47.89963884171248
+2024-02-24 17:37:24,075 - app - INFO - Current order status: FILLED
+2024-02-24 17:37:24,080 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': 'ae8a7a25-d48d-450a-876f-515eee2eb0e5', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.116328', 'post_only': True}}, 'side': 'BUY', 'client_order_id': '34865427-bf37-4b7c-95e4-599f08841833', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-24T17:44:42.954423Z', 'completion_percentage': '100.00', 'filled_size': '100', 'average_filled_price': '0.116328', 'fee': '', 'number_of_fills': '1', 'filled_value': '11.6328', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.0407148', 'size_inclusive_of_fees': False, 'total_value_after_fees': '11.6735148', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-24T18:55:47.339859Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-24 17:37:24,159 - app - INFO - Processed order parameters: {'total_spent_Q_clb': 11.673515, 'total_received_B_clb': 100.0, 'residual_amt_Q_clb': 0.012042}
+2024-02-24 17:37:24,161 - app - INFO - CyclSet 1 (sell_buy) Cycle2 completed.
+2024-02-24 17:37:28,012 - app - INFO - Current order status: FILLED
+2024-02-24 17:37:28,046 - app - INFO - Order filled successfully. Order details: {'order': {'order_id': '742a6cdd-b4c1-419a-bfd3-3d7ad48786fa', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '84', 'limit_price': '0.117259', 'post_only': True}}, 'side': 'BUY', 'client_order_id': '8fce502e-6822-470b-be9d-62ffb7805746', 'status': 'FILLED', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-24T17:53:31.179735Z', 'completion_percentage': '100.00', 'filled_size': '84', 'average_filled_price': '0.117259', 'fee': '', 'number_of_fills': '1', 'filled_value': '9.849756', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0.034474146', 'size_inclusive_of_fees': False, 'total_value_after_fees': '9.884230146', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': True, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '0', 'is_liquidation': False, 'last_fill_time': '2024-02-24T17:56:19.168Z', 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}}
+2024-02-24 17:37:28,060 - app - INFO - Processed order parameters: {'total_spent_Q_olb': 9.88423, 'total_received_B_olb': 84.0, 'residual_amt_Q_olb': 0.063062}
+2024-02-24 17:37:28,062 - app - INFO - Value of order_processing_params: {'total_spent_Q_olb': 9.88423, 'total_received_B_olb': 84.0, 'residual_amt_Q_olb': 0.063062}
+2024-02-24 17:37:28,063 - app - INFO - Closing cycle sell price calculated: 0.118197
+2024-02-24 17:37:28,065 - app - INFO - Amount of base currency compounded for close cycle limit sell order: 1.0
+2024-02-24 17:37:28,067 - app - INFO - Amount of base currency to be used if no compounding for close cycle limit sell order: 83.0
+2024-02-24 17:37:28,068 - app - INFO - Next close cycle limit order base currency size: 84.0
+2024-02-24 17:37:29,241 - app - INFO - Next closing cycle sell order placed. Order ID: 0b72bcc5-5221-4f8a-84a9-1b085d7e25e5
+2024-02-24 17:37:29,246 - app - INFO - Closing cycle sell order placed successfully: 0b72bcc5-5221-4f8a-84a9-1b085d7e25e5
+2024-02-24 17:37:30,219 - app - INFO - Initial order details: {'order_id': '0b72bcc5-5221-4f8a-84a9-1b085d7e25e5', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '84', 'limit_price': '0.118197', 'post_only': True}}, 'side': 'SELL', 'client_order_id': '90fb22d4-da85-47d5-bb83-832b74844b10', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-24T22:37:28.191358Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '84', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-24 17:37:43,939 - app - INFO - {'cycle_set_number': 1, 'cycleset_instance_id': 'CycleSet 1 (sell_buy)', 'cycle_set_type': 'sell_buy', 'cycleset_status': 'CyclSet 1 sell_buy Active', 'completed_cycles': 0, 'product_id': 'XLM-USD', 'starting_size': 100.0, 'profit_percent': 0.001, 'taker_fee': 0.0055, 'maker_fee': 0.0035, 'compound_percent': 100.0, 'compounding_option': '100', 'wait_period_unit': 'minutes', 'first_order_wait_period': 1, 'chart_interval': 60, 'num_intervals': 20, 'window_Size': 20, 'stacking': 'False', 'step_price': 'False', 'cycleset_running': True, 'starting_dollar_value': None, 'current_dollar_value': None, 'percent_gain_loss_dollar': None, 'percent_gain_loss_base': None, 'percent_gain_loss_quote': None, 'average_profit_percent_per_hour': None, 'average_profit_percent_per_day': None, 'cycle_instances': [{'cycle_number': 1, 'open_size': 100.0, 'cycleset_instance_id': <cycle_set_utils.CycleSet object at 0x0000026D3B7CB710>, 'cycle_type': 'sell_buy', 'cycle_instance_id': 'Cycle (sell_buy) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}, {'cycle_number': 1, 'open_size': 100.0, 'cycleset_instance_id': 'CycleSet 1 (sell_buy)', 'cycle_type': 'sell_buy', 'cycle_instance_id': 'Cycle (sell_buy) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}, {'cycle_number': 2, 'open_size': 100.0, 'cycleset_instance_id': 'CycleSet 1 (sell_buy)', 'cycle_type': 'sell_buy', 'cycle_instance_id': 'Cycle (sell_buy) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}, {'cycle_number': 2, 'open_size': 100.0, 'cycleset_instance_id': 'CycleSet 1 (sell_buy)', 'cycle_type': 'sell_buy', 'cycle_instance_id': 'Cycle (sell_buy) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}]}
+2024-02-24 17:37:43,951 - app - INFO - None
+2024-02-24 17:37:43,952 - app - INFO - {'cycle_set_number': 1, 'cycleset_instance_id': 'CycleSet 1 (buy_sell)', 'cycle_set_type': 'buy_sell', 'cycleset_status': 'CyclSet 1 buy_sell Active', 'completed_cycles': 0, 'product_id': 'XLM-USD', 'starting_size': 10.0, 'profit_percent': 0.001, 'taker_fee': 0.0055, 'maker_fee': 0.0035, 'compound_percent': 100.0, 'compounding_option': '100', 'wait_period_unit': 'minutes', 'first_order_wait_period': 1, 'chart_interval': 60, 'num_intervals': 20, 'window_Size': 20, 'stacking': 'False', 'step_price': 'False', 'cycleset_running': True, 'starting_dollar_value': None, 'current_dollar_value': None, 'percent_gain_loss_dollar': None, 'percent_gain_loss_base': None, 'percent_gain_loss_quote': None, 'average_profit_percent_per_hour': None, 'average_profit_percent_per_day': None, 'cycle_instances': [{'cycle_number': 1, 'open_size': 10.0, 'cycleset_instance_id': <cycle_set_utils.CycleSet object at 0x0000026D3E5AFF90>, 'cycle_type': 'buy_sell', 'cycle_instance_id': 'Cycle (buy_sell) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}, {'cycle_number': 1, 'open_size': 10.0, 'cycleset_instance_id': 'CycleSet 1 (buy_sell)', 'cycle_type': 'buy_sell', 'cycle_instance_id': 'Cycle (buy_sell) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}, {'cycle_number': 2, 'open_size': 9.947292, 'cycleset_instance_id': 'CycleSet 1 (buy_sell)', 'cycle_type': 'buy_sell', 'cycle_instance_id': 'Cycle (buy_sell) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}, {'cycle_number': 2, 'open_size': 9.947292, 'cycleset_instance_id': 'CycleSet 1 (buy_sell)', 'cycle_type': 'buy_sell', 'cycle_instance_id': 'Cycle (buy_sell) cycle_number: 1', 'cycle_running': False, 'cycle_status': 'Pending', 'orders': []}]}
+2024-02-24 17:37:43,955 - app - INFO - None
+2024-02-24 17:38:45,083 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.970658222713524
+2024-02-24 17:38:45,086 - app - INFO - Current RSI: 46.970658222713524
+2024-02-24 17:38:49,081 - app - INFO - Current XLM-USD price: 0.116603
+2024-02-24 17:40:13,888 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.53962261569973
+2024-02-24 17:42:52,029 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.47327752023052
+2024-02-24 17:45:40,279 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.015445913172826
+2024-02-24 17:48:05,018 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.499140120342425
+2024-02-24 17:50:30,958 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.441294764761764
+2024-02-24 17:52:55,309 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.35092366433323
+2024-02-24 17:55:26,883 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.2918592939256
+2024-02-24 17:58:10,650 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.226206005522165
+2024-02-24 18:01:00,847 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.80050683785173
+2024-02-24 18:03:52,816 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.32794085195885
+2024-02-24 18:06:57,704 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.445486397665746
+2024-02-24 18:10:03,240 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.22528520460736
+2024-02-24 18:13:25,352 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.04048142225116
+2024-02-24 18:16:30,754 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.71431184932026
+2024-02-24 18:19:29,920 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.59916457038315
+2024-02-24 18:21:55,829 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.62281269449109
+2024-02-24 18:24:22,482 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 48.16976310859537
+2024-02-24 18:26:48,050 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.51840383480008
+2024-02-24 18:29:17,129 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.41691709511477
+2024-02-24 18:31:41,978 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.3626464311214
+2024-02-24 18:34:09,546 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.42921107901831
+2024-02-24 18:36:40,906 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.82681178607732
+2024-02-24 18:39:22,742 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.94322345160673
+2024-02-24 18:41:46,945 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.873892985819104
+2024-02-24 18:44:10,772 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.5382108044712
+2024-02-24 18:46:46,094 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.34213767488717
+2024-02-24 18:49:17,345 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.422675446711324
+2024-02-24 18:51:48,244 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.6375319787108
+2024-02-24 18:54:18,775 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.50135315414067
+2024-02-24 18:56:49,871 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.8091488875977
+2024-02-24 18:59:23,837 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.17709691056338
+2024-02-24 19:01:58,207 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.178830377703854
+2024-02-24 19:04:33,695 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.8008071300473
+2024-02-24 19:07:18,607 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.800400645776
+2024-02-24 19:09:58,819 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.146131643796224
+2024-02-24 19:12:41,903 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.22537476429817
+2024-02-24 19:15:08,074 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.384577121671654
+2024-02-24 19:17:40,345 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.0755262839714
+2024-02-24 19:20:53,744 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.58220303388925
+2024-02-24 19:23:25,574 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.079747961629
+2024-02-24 19:25:56,369 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.234916584580226
+2024-02-24 19:28:33,952 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.35558141085546
+2024-02-24 19:31:27,710 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.3747585609308
+2024-02-24 19:34:05,918 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.16362735290987
+2024-02-24 19:36:43,074 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.91975953076097
+2024-02-24 19:39:04,734 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.07809389772573
+2024-02-24 19:41:28,450 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.29393984551865
+2024-02-24 19:44:07,045 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.19553669438475
+2024-02-24 19:46:36,261 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.93380394627134
+2024-02-24 19:48:57,963 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.1483843321034
+2024-02-24 19:51:22,539 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.24046191175563
+2024-02-24 19:53:47,221 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.1751279044922
+2024-02-24 19:56:15,850 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.003930863106675
+2024-02-24 19:58:43,849 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.16759318530791
+2024-02-24 20:01:19,755 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.47652737958026
+2024-02-24 20:03:54,318 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.20235422124086
+2024-02-24 20:06:28,608 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.73738256408629
+2024-02-24 20:09:04,367 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.113405413200475
+2024-02-24 20:11:43,198 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.50936795567666
+2024-02-24 20:14:15,639 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.450607901711464
+2024-02-24 20:16:38,174 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.65288703761911
+2024-02-24 20:19:01,329 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.644083987538366
+2024-02-24 20:21:25,004 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.584613467768314
+2024-02-24 20:23:50,956 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.21228151092197
+2024-02-24 20:26:13,481 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.38764908452516
+2024-02-24 20:28:45,465 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.95151014978754
+2024-02-24 20:31:17,183 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.66800035626857
+2024-02-24 20:33:52,276 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.24789313493475
+2024-02-24 20:36:25,517 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.899096674577606
+2024-02-24 20:38:55,566 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.7376851369824
+2024-02-24 20:41:26,760 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.6361550496638
+2024-02-24 20:43:48,409 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.65113051060206
+2024-02-24 20:46:11,364 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.39530810712805
+2024-02-24 20:48:34,997 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.306683882337275
+2024-02-24 20:50:59,839 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.90293873326316
+2024-02-24 20:53:28,416 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.59316729417789
+2024-02-24 20:56:05,275 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.82991426799054
+2024-02-24 20:58:43,688 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.324893775724895
+2024-02-24 21:01:22,220 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.89591655601359
+2024-02-24 21:04:09,515 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.748033988703284
+2024-02-24 21:06:54,172 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.10643942255043
+2024-02-24 21:10:10,072 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.82808497104402
+2024-02-24 21:13:16,538 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.16673963185227
+2024-02-24 21:16:18,982 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.49484262907442
+2024-02-24 21:19:05,249 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.401205603973274
+2024-02-24 21:21:29,344 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.24728464548495
+2024-02-24 21:23:52,648 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.451247990607555
+2024-02-24 21:26:20,976 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.59495510446035
+2024-02-24 21:28:54,275 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.131335883946356
+2024-02-24 21:31:22,786 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.83075996832393
+2024-02-24 21:33:45,726 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.69208768926333
+2024-02-24 21:36:08,747 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.37315572648461
+2024-02-24 21:38:32,250 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.41564295655044
+2024-02-24 21:41:00,681 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.7367131115107
+2024-02-24 21:43:23,662 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.61318595615615
+2024-02-24 21:45:46,127 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.39690023338481
+2024-02-24 21:48:09,307 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.520992640716194
+2024-02-24 21:50:36,466 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.740329442964594
+2024-02-24 21:53:01,619 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.921348170404585
+2024-02-24 21:55:31,781 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.12234327722691
+2024-02-24 21:58:06,068 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.16627166345518
+2024-02-24 22:01:03,788 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.25984138648919
+2024-02-24 22:03:59,183 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.683262591277646
+2024-02-24 22:06:58,977 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.54672467061049
+2024-02-24 22:09:54,642 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.82587930879
+2024-02-24 22:12:45,435 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.76283738677901
+2024-02-24 22:16:01,210 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.336042097130566
+2024-02-24 22:19:02,080 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.01852052938095
+2024-02-24 22:21:24,687 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.80113115981427
+2024-02-24 22:23:50,062 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.99719658743555
+2024-02-24 22:26:33,569 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.736789740847186
+2024-02-24 22:29:15,502 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.827820057516625
+2024-02-24 22:31:51,928 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.69117721805125
+2024-02-24 22:34:33,065 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.057450919546746
+2024-02-24 22:37:09,109 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.956112877218935
+2024-02-24 22:39:51,181 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.38387720675933
+2024-02-24 22:42:44,536 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.31024438336611
+2024-02-24 22:45:16,509 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.59062801555326
+2024-02-24 22:47:40,756 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.90979886607962
+2024-02-24 22:50:05,756 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.89510951746026
+2024-02-24 22:52:33,792 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.8948980458948
+2024-02-24 22:54:58,611 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.20733707704381
+2024-02-24 22:57:33,702 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.90109090889483
+2024-02-24 23:00:52,209 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.69723647826146
+2024-02-24 23:03:56,099 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.26967946947429
+2024-02-24 23:07:03,485 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.3104125208706
+2024-02-24 23:09:53,700 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.321775935221915
+2024-02-24 23:12:47,653 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.55602133852979
+2024-02-24 23:15:33,934 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.00708348364464
+2024-02-24 23:18:33,698 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.72844988233209
+2024-02-24 23:21:15,942 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.201405070750454
+2024-02-24 23:23:50,896 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.56370196861178
+2024-02-24 23:26:13,761 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.214395848312215
+2024-02-24 23:28:36,033 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.865433858232485
+2024-02-24 23:31:08,212 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.17103305734046
+2024-02-24 23:33:30,460 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.558921394417176
+2024-02-24 23:36:05,930 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.66063863949001
+2024-02-24 23:38:40,266 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.6164850863381
+2024-02-24 23:41:15,083 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.689947185699765
+2024-02-24 23:44:00,330 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.00836196798239
+2024-02-24 23:46:35,420 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.44906623909941
+2024-02-24 23:49:25,374 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.64492298958575
+2024-02-24 23:52:34,625 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.92160738612489
+2024-02-24 23:56:24,174 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.61226499273056
+2024-02-24 23:59:49,899 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.14853392370173
+2024-02-25 00:03:07,111 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.323027792423495
+2024-02-25 00:08:14,161 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.13029907716314
+2024-02-25 00:12:22,073 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.69455381311108
+2024-02-25 00:16:22,560 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.75245086204668
+2024-02-25 00:20:29,437 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.797638475566856
+2024-02-25 00:23:47,568 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.29499524664966
+2024-02-25 00:27:13,017 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.13606552247804
+2024-02-25 00:30:55,240 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.87419680218487
+2024-02-25 00:34:35,436 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.52624036832897
+2024-02-25 00:38:13,269 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.222221760205926
+2024-02-25 00:40:55,420 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.23590502065988
+2024-02-25 00:43:33,906 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.208649297339186
+2024-02-25 00:46:08,812 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.97263616133275
+2024-02-25 00:48:51,808 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.96072305755559
+2024-02-25 00:52:03,740 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.93332385288664
+2024-02-25 00:54:42,982 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.09739706344738
+2024-02-25 00:58:18,945 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.2043394132566
+2024-02-25 01:02:13,538 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.524663530223066
+2024-02-25 01:06:09,986 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.5370497334883
+2024-02-25 01:10:07,967 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.7979667792653
+2024-02-25 01:13:19,341 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.02508620489274
+2024-02-25 01:16:22,309 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.28883437194394
+2024-02-25 01:19:48,050 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.2347897505999
+2024-02-25 01:23:36,235 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.94313344081368
+2024-02-25 01:26:57,591 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.227936242395565
+2024-02-25 01:30:19,997 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.08929576224995
+2024-02-25 01:33:20,103 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.13807656802959
+2024-02-25 01:35:56,640 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.14732970877623
+2024-02-25 01:38:32,112 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.550232072245976
+2024-02-25 01:41:30,576 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.34424651191554
+2024-02-25 01:44:13,715 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.32403475322505
+2024-02-25 01:47:04,892 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.60427935993079
+2024-02-25 01:50:07,787 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.88796917160737
+2024-02-25 01:53:07,297 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.59463226736197
+2024-02-25 01:56:53,497 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.5483020477454
+2024-02-25 02:00:09,570 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.818439767478864
+2024-02-25 02:03:32,483 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.43262381955586
+2024-02-25 02:07:12,408 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.22297697976626
+2024-02-25 02:10:59,725 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 42.725173693362315
+2024-02-25 02:14:24,460 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.344437660296855
+2024-02-25 02:17:31,493 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.76476784782883
+2024-02-25 02:20:29,006 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.45172899218102
+2024-02-25 02:24:21,559 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.435798158176524
+2024-02-25 02:28:23,870 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.262735060174435
+2024-02-25 02:32:04,927 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.63928241548656
+2024-02-25 02:35:06,370 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.07007098134651
+2024-02-25 02:38:00,142 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.00408146661814
+2024-02-25 02:40:46,541 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.76648801894582
+2024-02-25 02:43:41,195 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 43.85019212876364
+2024-02-25 02:46:42,647 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.295548784120435
+2024-02-25 02:49:12,177 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.08115385676322
+2024-02-25 02:51:50,099 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.28176356724414
+2024-02-25 02:54:25,747 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.36668679203929
+2024-02-25 02:58:36,347 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.34713514923506
+2024-02-25 03:01:56,815 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.417621806939756
+2024-02-25 03:05:04,181 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.781608807450695
+2024-02-25 03:08:25,378 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.90086387195263
+2024-02-25 03:11:32,796 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.89740196143142
+2024-02-25 03:15:06,913 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.26367905695447
+2024-02-25 03:18:46,119 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.917018705460315
+2024-02-25 03:22:09,133 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.606185598424595
+2024-02-25 03:25:17,788 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.3767508290722
+2024-02-25 03:28:16,704 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.25983590860119
+2024-02-25 03:31:06,804 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.00526496202717
+2024-02-25 03:33:40,632 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.634032542236106
+2024-02-25 03:36:32,328 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.10700508775542
+2024-02-25 03:39:04,815 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.22060529645659
+2024-02-25 03:41:35,646 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.206671595402234
+2024-02-25 03:44:12,199 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.07931497337784
+2024-02-25 03:46:54,201 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.57066783904851
+2024-02-25 03:49:48,861 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.42668870185145
+2024-02-25 03:52:20,750 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.39664108848634
+2024-02-25 03:55:07,865 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 44.83652455164975
+2024-02-25 03:58:49,944 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.42043559166245
+2024-02-25 04:02:50,479 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.63667532836487
+2024-02-25 04:06:23,444 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.638854714284854
+2024-02-25 04:09:40,501 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.54770763623854
+2024-02-25 04:12:41,601 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.506646454644
+2024-02-25 04:15:39,730 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.226272677518466
+2024-02-25 04:19:16,417 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.677891844124346
+2024-02-25 04:22:40,501 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.592555668546076
+2024-02-25 04:25:57,502 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.83085417005708
+2024-02-25 04:29:15,965 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.23659976152265
+2024-02-25 04:32:11,550 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.740424491284
+2024-02-25 04:35:12,383 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.723856169061726
+2024-02-25 04:37:56,553 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.87084229240999
+2024-02-25 04:41:12,055 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.503662448537035
+2024-02-25 04:43:57,679 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.36377827969781
+2024-02-25 04:46:30,907 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.779038345421306
+2024-02-25 04:49:08,689 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.89999999058076
+2024-02-25 04:52:00,747 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.152239753426024
+2024-02-25 04:55:26,542 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.16395156458275
+2024-02-25 04:58:30,285 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.508702567668486
+2024-02-25 05:02:06,115 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.66786725735562
+2024-02-25 05:06:00,347 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.6771560587357
+2024-02-25 05:10:02,095 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.05508908603001
+2024-02-25 05:13:29,148 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.280832786053715
+2024-02-25 05:16:29,436 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.38834343121758
+2024-02-25 05:19:32,659 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.078647850473054
+2024-02-25 05:23:08,169 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 45.72786636068118
+2024-02-25 05:27:01,561 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.26778569949951
+2024-02-25 05:30:34,195 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.33559169029801
+2024-02-25 05:34:32,007 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.8239661495768
+2024-02-25 05:37:07,128 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 46.75454382525372
+2024-02-25 05:39:43,566 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.4538713118548
+2024-02-25 05:42:18,295 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.079330265080124
+2024-02-25 05:44:59,675 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.110088313829436
+2024-02-25 05:47:51,738 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.30911265623626
+2024-02-25 05:50:40,320 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.49985419130102
+2024-02-25 05:53:24,633 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.58649733206473
+2024-02-25 05:57:16,913 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.547200120312546
+2024-02-25 06:00:48,355 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.77009301852415
+2024-02-25 06:03:56,957 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.62611397290776
+2024-02-25 06:06:52,490 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.48170187973279
+2024-02-25 06:09:48,530 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.397130319286234
+2024-02-25 06:13:21,803 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.355839512534224
+2024-02-25 06:17:19,122 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.61643400822907
+2024-02-25 06:20:45,012 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.02604491810079
+2024-02-25 06:24:03,927 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 47.8683043829163
+2024-02-25 06:27:00,440 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 48.24583070194558
+2024-02-25 06:29:58,543 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 48.72078530953845
+2024-02-25 06:32:37,776 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 49.005949679391456
+2024-02-25 06:35:25,682 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 49.56946815762804
+2024-02-25 06:38:24,367 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 49.85797655937383
+2024-02-25 06:40:59,466 - app - INFO - Calculated RSI for XLM-USD, interval 60, length 20160: 50.249194079027006
+2024-02-25 06:42:32,119 - app - INFO - Next opening cycle sell price: 0.117266
+2024-02-25 06:42:32,129 - app - INFO - Opening cycle sell order price determined: 0.117266
+2024-02-25 06:42:32,141 - app - INFO - Amount of base currency compounded for open cycle limit sell order: 1.0
+2024-02-25 06:42:32,163 - app - INFO - Amount of base currency to be used if no compounding for open cycle limit sell order: 99.0
+2024-02-25 06:42:32,178 - app - INFO - Opening sell order ID: 3a9fbff1-c49a-467f-b3ca-394d7b97f4c0, Closing buy order ID: ae8a7a25-d48d-450a-876f-515eee2eb0e5
+2024-02-25 06:42:32,181 - app - INFO - Starting next sell_buy cycle, Cycle 3 of CycleSet 1 (sell_buy)
+2024-02-25 06:42:32,186 - app - INFO - Self: <cycle_set_utils.CycleSet object at 0x0000026D3B7CB710>
+2024-02-25 06:42:33,456 - app - INFO - Next opening cycle sell order placed. Order ID: 68eceb34-d262-4063-b574-91986a6c49b1
+2024-02-25 06:42:33,483 - app - INFO - Opening cycle sell order placed successfully: 68eceb34-d262-4063-b574-91986a6c49b1
+2024-02-25 06:42:33,495 - app - INFO - CyclSet 1 (sell_buy) Cycle 3: Active-Opening Cycle Sell Order
+2024-02-25 06:42:34,364 - app - INFO - Initial order details: {'order_id': '68eceb34-d262-4063-b574-91986a6c49b1', 'product_id': 'XLM-USD', 'user_id': '4bbe24f3-0654-5d5b-92bb-0fbd075ee51e', 'order_configuration': {'limit_limit_gtc': {'base_size': '100', 'limit_price': '0.117266', 'post_only': True}}, 'side': 'SELL', 'client_order_id': 'dc9c9bda-30ef-49ae-8283-266721ded32b', 'status': 'OPEN', 'time_in_force': 'GOOD_UNTIL_CANCELLED', 'created_time': '2024-02-25T11:42:32.603044Z', 'completion_percentage': '0', 'filled_size': '0', 'average_filled_price': '0', 'fee': '', 'number_of_fills': '0', 'filled_value': '0', 'pending_cancel': False, 'size_in_quote': False, 'total_fees': '0', 'size_inclusive_of_fees': False, 'total_value_after_fees': '0', 'trigger_status': 'INVALID_ORDER_TYPE', 'order_type': 'LIMIT', 'reject_reason': 'REJECT_REASON_UNSPECIFIED', 'settled': False, 'product_type': 'SPOT', 'reject_message': '', 'cancel_message': '', 'order_placement_source': 'RETAIL_ADVANCED', 'outstanding_hold_amount': '100', 'is_liquidation': False, 'last_fill_time': None, 'edit_history': [], 'leverage': '', 'margin_type': 'UNKNOWN_MARGIN_TYPE'}
+2024-02-27 14:21:34,455 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 14:31:57,169 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 14:32:41,157 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 14:36:24,310 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 14:41:24,004 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 14:42:25,317 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 16:24:39,724 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 17:04:32,628 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 17:21:40,947 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 17:29:28,335 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 17:30:33,205 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 17:31:58,284 - app - INFO - This message will be logged in 'app.log' and printed to the console.
+2024-02-27 17:35:21,355 - app - INFO - This message will be logged in 'app.log' and printed to the console.

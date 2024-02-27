@@ -1,13 +1,36 @@
-2024-01-26 03:14:40,650 - errors - ERROR - This is an error message
-2024-01-26 03:16:55,757 - errors - ERROR - This is an error message
-2024-01-26 10:27:34,732 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-26 10:28:34,103 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
-2024-01-26 11:21:30,649 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-27 01:38:47,119 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-27 14:56:52,619 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-27 14:57:47,976 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
-2024-01-27 14:58:28,442 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-27 15:00:55,348 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-27 15:02:06,293 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
-2024-01-29 17:30:53,084 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
-2024-01-29 17:31:13,287 - errors - ERROR - An error occurred in wait_for_order: Expecting value: line 1 column 1 (char 0)
+2024-02-22 03:24:48,841 - errors - ERROR - This is an error message
+2024-02-22 03:26:41,791 - errors - ERROR - This is an error message
+2024-02-22 04:23:26,332 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-22 04:23:31,990 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-22 07:39:27,725 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-22 07:39:33,710 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-22 12:42:29,054 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-23 09:24:29,848 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-24 02:11:29,360 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-24 03:15:16,428 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-24 08:34:21,712 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-24 12:01:12,290 - errors - ERROR - This is an error message
+2024-02-24 12:03:34,516 - errors - ERROR - This is an error message
+2024-02-24 12:29:12,111 - errors - ERROR - This is an error message
+2024-02-24 13:31:33,631 - errors - ERROR - This is an error message
+2024-02-24 13:35:50,430 - errors - ERROR - This is an error message
+2024-02-24 13:52:44,507 - errors - ERROR - This is an error message
+2024-02-24 13:54:46,304 - errors - ERROR - This is an error message
+2024-02-24 13:58:02,519 - errors - ERROR - This is an error message
+2024-02-24 14:00:08,176 - errors - ERROR - This is an error message
+2024-02-24 14:56:03,051 - errors - ERROR - This is an error message
+2024-02-24 17:37:12,507 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-24 17:37:17,695 - errors - ERROR - An error occurred in wait_for_order: Remote end closed connection without response
+2024-02-27 14:21:34,452 - errors - ERROR - This is an error message
+2024-02-27 14:31:57,168 - errors - ERROR - This is an error message
+2024-02-27 14:32:41,155 - errors - ERROR - This is an error message
+2024-02-27 14:36:24,308 - errors - ERROR - This is an error message
+2024-02-27 14:41:24,002 - errors - ERROR - This is an error message
+2024-02-27 14:42:25,316 - errors - ERROR - This is an error message
+2024-02-27 16:24:39,721 - errors - ERROR - This is an error message
+2024-02-27 17:04:32,625 - errors - ERROR - This is an error message
+2024-02-27 17:21:40,946 - errors - ERROR - This is an error message
+2024-02-27 17:29:28,334 - errors - ERROR - This is an error message
+2024-02-27 17:30:33,205 - errors - ERROR - This is an error message
+2024-02-27 17:31:58,283 - errors - ERROR - This is an error message
+2024-02-27 17:35:21,354 - errors - ERROR - This is an error message

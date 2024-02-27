@@ -1,5 +1,6 @@
 #order_utils.py
 from logging_config import app_logger, info_logger, error_logger
+import threading
 import uuid
 import requests
 from requests.auth import AuthBase
@@ -13,6 +14,7 @@ from config import config_data
 from starting_input import user_config
 from coinbase_auth import create_signed_request, fetch_historical_data
 from error_handling_utils import handle_error_and_return_to_main_loop
+from trading_record_manager import handle_options_menu
 
 # Define API credentials
 api_key = config_data["api_key"]
@@ -273,9 +275,11 @@ def get_order_details(conn, api_key, api_secret, order_id, max_retries):
             wait_time = 5 * (2 ** retries)
             time.sleep(wait_time)
 
-def wait_for_order(api_key, api_secret, order_id, max_retries=3):
-    from trading_record_manager import handle_options_menu
-    print("Loading wait_for_order...")
+def handle_timeout():
+    print("Timeout occurred. No response received within the specified time.")
+    # Add any additional actions you want to take when a timeout occurs
+
+def wait_for_order(api_key, api_secret, order_id, max_retries=3, timeout=600):
     conn = http.client.HTTPSConnection("api.coinbase.com")
 
     # Initial request to get order details with retry logic
@@ -290,11 +294,18 @@ def wait_for_order(api_key, api_secret, order_id, max_retries=3):
     if order_details["order"]["status"] == "OPEN":
         print("Waiting for order to fill...")
         try:
+            # Start a timer to handle the timeout
+            timer = threading.Timer(timeout, handle_timeout)
+            timer.start()
+
             # Call for 'Options menu' while waiting for order(s) to fill
             handle_options_menu()
 
+            # If the user responds within the timeout period, cancel the timer
+            timer.cancel()
+
         except Exception as e:
-            handle_error_and_return_to_main_loop()       
+            handle_error_and_return_to_main_loop()        
 
     elif order_details["order"]["status"] == "CANCELLED":
         print("Order cancelled. Check exchange and handle orders manually or retry entering trading data.")

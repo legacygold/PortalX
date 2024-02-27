@@ -1,268 +1,175 @@
 # test_function.py
-import threading
+
 import time
-from trading_record_manager import menu_choice, display_options_menu, menu_lock, collect_user_input, create_and_start_cycle_sets
-from logging_config import app_logger, error_logger
-from user_input2 import user_config
-from cycle_set_utils import CycleSet, Cycle  # Import the original CycleSet class
+import pandas as pd
+from requests.exceptions import Timeout
+from logging_config import app_logger
+from config import config_data
+from starting_input import user_config
+from coinbase_auth import create_signed_request, fetch_historical_data
+from coinbase_utils import fetch_product_stats
+from tradingview_ta_utils import create_ta_handler_instance, get_ta_handler_analysis
 
-# Define locks
-sell_buy_lock = threading.Lock()
-buy_sell_lock = threading.Lock()
-print_lock = threading.Lock()
-menu_lock = threading.Lock()
+# Define API credentials
+api_key = config_data["api_key"]
+api_secret = config_data["api_secret"]
+api_url = 'https://api.coinbase.com'
+orderep = '/api/v3/brokerage/orders'
 
-# Initialize the counters for CycleSet instances
-sell_buy_cycle_set_counter = 0
-buy_sell_cycle_set_counter = 0
+# Define config data parameters
+product_id = user_config["product_id"]
+starting_size_B = user_config["starting_size_B"]
+starting_size_Q = user_config["starting_size_Q"]
+profit_percent = user_config["profit_percent"]
+maker_fee = user_config["maker_fee"]
+taker_fee = user_config["taker_fee"]
+chart_interval = user_config["chart_interval"]
+num_intervals = user_config["num_intervals"]
+window_size = user_config["window_size"]
 
-# Create a list to hold CycleSet instances
-cycle_sets = []
+# Print statement to indicate fetching historical data
+app_logger.info("Fetching historical data for %s", product_id)
 
-def create_and_start_cycle_set_sell_buy(user_config):
-    with sell_buy_lock:
-        global sell_buy_cycle_set_counter
-        try:
-            if "starting_size_B" in user_config:
-                # Create one sell-buy cycle set instance
-                starting_size = user_config["starting_size_B"]
-                cycle_type = "sell_buy"
-                new_cycle_set_sell_buy = CycleSet(
-                    user_config["product_id"],
-                    starting_size,
-                    user_config["profit_percent"],
-                    user_config["taker_fee"],
-                    user_config["maker_fee"],
-                    user_config["compound_percent"],
-                    user_config["compounding_option"],
-                    user_config["wait_period_unit"],
-                    user_config["first_order_wait_period"],
-                    user_config["chart_interval"],
-                    user_config["num_intervals"],
-                    user_config["window_size"],
-                    user_config["stacking"],
-                    user_config["step_price"],
-                    cycle_type=cycle_type
-                )
-                new_cycle_set_sell_buy.cycleset_running = True
-                cycle_sets.append(new_cycle_set_sell_buy)
-                sell_buy_cycle_set_counter += 1
+# Fetch historical data for the specified chart interval
+historical_data = fetch_historical_data(product_id, chart_interval, num_intervals)
 
-                # Create a Cycle instance and pass the parent CycleSet
-                new_cycle_sell_buy = Cycle(
-                    starting_size,
-                    new_cycle_set_sell_buy, 
-                    "sell_buy",  # Cycle type
-                )
+# Define the api endpoint and payload (if applicable)
+endpoint = f'/api/v3/brokerage/products/{product_id}' # Replace with the actual endpoint
+method = 'GET'
+body = '' # Empty for GET requests
 
-                app_logger.info(f"Cycle Set {sell_buy_cycle_set_counter} (sell_buy) created.")
+# Create a signed request using your API credentials
+headers = create_signed_request(api_key, api_secret, method, endpoint, body)
 
-                new_cycle_set_sell_buy.cycle_instances.append(new_cycle_sell_buy)
+# Fetch the latest product stats from Coinbase API with error handling
+app_logger.info("Fetching product stats for %s", product_id)
+product_stats = fetch_product_stats(product_id, api_key, headers)
 
-                # Start the sell-buy cycle set
-                new_cycle_set_sell_buy.start_sell_buy_starting_cycle(user_config)
-                
-                return new_cycle_set_sell_buy  # Return the newly created CycleSet
-            else:
-                error_logger.error("Sell-Buy cycle set not created. 'starting_size_B' is missing in user_config.")
+# Extract the close prices from the historical data
+closing_prices = []
 
-        except Exception as e:
-            # Handle exceptions or errors
-            error_logger.error(f"An error occurred in the main loop: {e}")
+for entry in historical_data:
+    try:
+        close_price = float(entry[4])
+        closing_prices.append(close_price)
+    except ValueError:
+        # Handle invalid data (e.g., non-numeric values) here, if needed
+        # You can print a message or take other appropriate actions
+        pass
 
-def create_and_start_cycle_set_buy_sell(user_config):
-    with buy_sell_lock:
-        global buy_sell_cycle_set_counter
-        try:
-            if "starting_size_Q" in user_config:
-                # Create one buy-sell cycle set instance
-                starting_size = user_config["starting_size_Q"]
-                cycle_type = "buy_sell"
-                new_cycle_set_buy_sell = CycleSet(
-                    user_config["product_id"],
-                    starting_size,
-                    user_config["profit_percent"],
-                    user_config["taker_fee"],
-                    user_config["maker_fee"],
-                    user_config["compound_percent"],
-                    user_config["compounding_option"],
-                    user_config["wait_period_unit"],
-                    user_config["first_order_wait_period"],
-                    user_config["chart_interval"],
-                    user_config["num_intervals"],
-                    user_config["window_size"],
-                    user_config["stacking"],
-                    user_config["step_price"],
-                    cycle_type=cycle_type
-                )
-                new_cycle_set_buy_sell.cycleset_running = True
-                cycle_sets.append(new_cycle_set_buy_sell)
-                buy_sell_cycle_set_counter += 1
-
-                # Create a Cycle instance and pass the parent CycleSet
-                new_cycle_buy_sell = Cycle(
-                    starting_size,
-                    new_cycle_set_buy_sell,
-                    "buy_sell" # Cycle type
-                )
-
-                app_logger.info(f"Cycle Set {buy_sell_cycle_set_counter} (buy_sell) created.")
-
-                new_cycle_set_buy_sell.cycle_instances.append(new_cycle_buy_sell)
-
-                # Start the sell-buy cycle set
-                new_cycle_set_buy_sell.start_buy_sell_starting_cycle(user_config)     
-                
-                return new_cycle_set_buy_sell  # Return the newly created CycleSet
-
-            else:
-                error_logger.error("Buy-Sell cycle set not created. 'starting_size_Q' is missing in user_config.")
-
-        except Exception as e:
-            # Handle exceptions or errors
-            error_logger.error(f"An error occurred in the main loop: {e}")
-
-# Create an event
-options_menu_event = threading.Event()
-
-# Set options menu
-options_menu_event.set()
-
-def test_function():
-    # Set the event
-    options_menu_event.set()
-    # Check if the event is set
-    if options_menu_event.is_set():
-        print("Options menu event is set.")
-    else:
-        print("Options menu event is not set.")
-
-# Run the test function
-test_function()
-
-# Sleep to observe the state change
-time.sleep(2)
-
-# Clear the event
-options_menu_event.clear()
-
-# Check again
-if options_menu_event.is_set():
-    print("Options menu event is set.")
-else:
-    print("Options menu event is not set.")
-
-# Re-set options menu
-options_menu_event.set()
-
-if options_menu_event.is_set():    
-    # Choice for displaying options menu
-    menu_prompt = menu_choice("Do you want to display the Options Menu? (y/n): ", ['y', 'n'])
-    print(menu_prompt)
-
-if menu_prompt == 'y':
+def new_calculate_rsi(closing_prices, period=14):
+    """
+    Calculate the Relative Strength Index (RSI) for a given list of closing prices.
     
-    # Display options and get the user's choice
-    choice = display_options_menu()
-    print(choice)
+    Parameters:
+    - closing_prices: List of closing prices for a given product.
+    - period: Number of periods to use for RSI calculation, default is 14.
+    
+    Returns:
+    - RSI value.
+    """
+    if len(closing_prices) < period:
+        print("Insufficient data points for RSI calculation.")
+        time.sleep(300)
 
-    if choice == 1:
-        with menu_lock:
-            # Run user_input2.py to input user data (or create a function "collect_user_input()" to do this)
-            user_config = collect_user_input()
-            # Create a new instance of the CycleSet class and start first cycle
-            create_and_start_cycle_sets(user_config)
+    # Calculate price changes
+    delta = pd.Series(closing_prices).diff()
 
-    elif choice == 2:
-        # Display information about each CycleSet
-        with menu_lock:
-            # Create separate lists for 'sell_buy' and 'buy_sell' cycle sets
-            sell_buy_cycle_sets_data = []
-            buy_sell_cycle_sets_data = []
+    # Separate gains and losses
+    gain = delta.where(delta > 0, 0.0)
+    loss = -delta.where(delta < 0, 0.0)
 
-            for i, cycle_set in enumerate(cycle_sets, start=1):
-                # Collect cycle set data
-                cycle_set_data = {
-                    'cycle_set_number': cycle_set.cycleset_number,
-                    'cycleset_instance_id': cycle_set.cycleset_instance_id,
-                    'cycle_set_type': cycle_set.cycle_type,
-                    'cycleset_status': cycle_set.cycleset_status,
-                    'completed_cycles': cycle_set.completed_cycles,
-                    'product_id': cycle_set.product_id,
-                    'starting_size': cycle_set.starting_size,
-                    'profit_percent': cycle_set.profit_percent,
-                    'taker_fee': cycle_set.taker_fee,
-                    'maker_fee': cycle_set.maker_fee,
-                    'compound_percent': cycle_set.compound_percent,
-                    'compounding_option': cycle_set.compounding_option,
-                    'wait_period_unit': cycle_set.wait_period_unit,
-                    'first_order_wait_period': cycle_set.first_order_wait_period,
-                    'chart_interval': cycle_set.chart_interval,
-                    'num_intervals': cycle_set.num_intervals,
-                    'window_Size': cycle_set.window_size,
-                    'stacking': cycle_set.stacking,
-                    'step_price': cycle_set.step_price,
-                    'cycle_instances': [{
-                        'cycle_number': cycle.cycle_number,
-                        'open_size': cycle.open_size,
-                        'cycleset_instance_id': cycle.cycleset_instance_id,
-                        'cycle_type': cycle.cycle_type,
-                        'cycle_instance_id': cycle.cycle_instance_id,
-                        'cycle_running': cycle.self.cycle_running,
-                        'cycle_status': cycle.cycle_status,
-                        'orders': cycle.orders,
-                        # Include other relevant cycle attributes here
-                    } for cycle in cycle_set.cycle_instances],
-                    'cycleset_running': cycle_set.cycleset_running,
-                }
+    # Calculate the Exponential Moving Average (EMA) for gains and losses
+    avg_gain = gain.ewm(span=period, adjust=False).mean() # Using EMA
+    avg_loss = loss.ewm(span=period, adjust=False).mean() # Using EMA
 
-                # Determine the target list based on cycle set type
-                target_list = sell_buy_cycle_sets_data if cycle_set.cycle_type == 'sell_buy' else buy_sell_cycle_sets_data
-                target_list.append(cycle_set_data)
+    # Compute the Relative Strength (RS)
+    rs = avg_gain / avg_loss
 
-            # Print the 'sell_buy' cycle sets data
-            print("Sell-Buy Cycle Sets:")
-            for data in sell_buy_cycle_sets_data:
-                print(data)
+    # Calculate the RSI
+    rsi = 100 - (100 / (1 + rs))
 
-            # Print the 'buy_sell' cycle sets data
-            print("Buy-Sell Cycle Sets:")
-            for data in buy_sell_cycle_sets_data:
-                print(data)
-                        
-    elif choice == 3:
-        # User wants to stop a CycleSet instance
-        with menu_lock:
-            # Filter running cycle sets
-            running_cycle_sets = [cycle_set for cycle_set in cycle_sets if cycle_set.cycleset_running]
+    return rsi.iloc[-1]  # Return the last RSI value
 
-            if running_cycle_sets:
-                # Display a numbered list of running cycle sets
-                print("Running Cycle Sets:")
-                for i, cycle_set in enumerate(running_cycle_sets, start=1):
-                    print(f"{i}. {cycle_set.cycleset_instance_id}")
+def calculate_rsi(product_id, chart_interval, length):
+    while True:
+        # Print statement to indicate RSI calculation
+        print("Fetching RSI data...")
 
-                # Ask the user for the number corresponding to the cycle set they want to stop
-                try:
-                    choice_number = int(input("Enter the number of the cycle set you want to stop: "))
-                    if 1 <= choice_number <= len(running_cycle_sets):
-                        # Stop the selected CycleSet
-                        selected_cycle_set = running_cycle_sets[choice_number - 1]
-                        selected_cycle_set.stop()
-                        app_logger.info(f"CycleSet {selected_cycle_set.cycleset_instance_id} has been stopped.")
-                    else:
-                        error_logger.error("Invalid number. Please enter a valid number.")
-                except ValueError:
-                    error_logger.error("Invalid input. Please enter a valid number.")
-            else:
-                print("No running cycle sets to stop.")
+        # Define your desired time frame
+        total_data_points = 400 * chart_interval  # Slightly increased to ensure enough data
+        candles_per_request = 300  # Maximum candles per request
 
-    elif choice == 4:
-        # Exit the program
-        print("PortalX exited...")
+        # Calculate how many requests are needed
+        num_requests = total_data_points // candles_per_request
 
-    # Release the lock to allow other threads to use user_config
-    options_menu_event.clear()
+        # Initialize an empty list to collect closing prices
+        closing_prices = []
+
+        # Initialize the end_time to the current time
+        end_time = int(time.time())
+
+        # Make API requests and collect closing prices
+        for _ in range(num_requests):
+            # Calculate start_time based on end_time and the desired time frame
+            start_time = end_time - (chart_interval * candles_per_request)
+
+            # Make an API request and get historical data
+            data = fetch_historical_data(product_id, chart_interval, candles_per_request)
+
+            # Extract closing prices and append to the list
+            closing_prices.extend([entry[4] for entry in data])
+
+            # Update end_time for the next request
+            end_time = start_time
+
+        # Ensure we have enough data points for the calculation
+        if len(closing_prices) >= length:
+            break  # Exit the loop if we have enough data
+
+        # If we don't have enough data, wait for some time before retrying
+        print("Insufficient data points for RSI calculation. Retrying in 5 minutes...")
+        time.sleep(300)  # Wait for 5 minutes before retrying
+
+    # Fill missing or zero values in closing prices with a default value (e.g., 0.0)
+    closing_prices = pd.Series(closing_prices).fillna(0.0).tolist()
+
+    # Calculate price changes
+    delta = pd.Series(closing_prices).diff(1)
+    
+    # Separate gains and losses
+    gains = delta.where(delta > 0, 0)
+    losses = -delta.where(delta < 0, 0)
+    
+    # Filter out zero values from gains and losses
+    gains = gains[gains != 0]
+    losses = losses[losses != 0]
+
+    # Calculate average gains and losses
+    avg_gain = gains.sum() / len(gains)
+    avg_loss = losses.sum() / len(losses)
+
+    # Calculate relative strength (RS)
+    rs = avg_gain / avg_loss
+
+    # Calculate RSI
+    rsi = 100 - (100 / (1 + rs))
+
+    app_logger.info(f"Calculated RSI for {product_id}, interval {chart_interval}, length {length}: {rsi}")
+
+    return rsi
+
+# Example usage:
+handler = create_ta_handler_instance()
+analysis = get_ta_handler_analysis(handler)
+print("RSI: ", analysis.indicators["RSI"])
+
+rsi_value = new_calculate_rsi(closing_prices)
+print("Current RSI Value:", rsi_value)
+
+length = 360 * chart_interval
+rsi = calculate_rsi(product_id, chart_interval, length)
+print("Current RSI: ", rsi)
 
 
 
